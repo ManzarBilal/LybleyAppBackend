@@ -1,6 +1,6 @@
 const express = require("express");
 require("./src/db/connection");
-const router = require("./src/routers/test");
+const router = require("./src/routers/userRegistration");
 const app=express();
 
 app.use(express.json());
