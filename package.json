@@ -19,6 +19,11 @@
   "homepage": "https://github.com/ManzarBilal/LybleyAppBackend#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^7.0.3"
+    "fast-two-sms": "^3.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.3",
+    "otp-generator": "^4.0.1",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1"
   }
 }
