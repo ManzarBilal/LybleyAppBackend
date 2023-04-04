@@ -12,8 +12,8 @@ const app=express();
 app.use(passport.initialize());
 
 
-function smsSend(){
-    let options = {authorization :"oST3Je8bKsi6hGZjd9MHx047OmLrWcEDqAufIU51CnXpaBVtRPxqR3ZKJPHyWboQlOpAzstmL78j5cwS" , message : "This is from LY3LEY, Your OTP code is 2344" ,  numbers : ["9565892772"]}
+function smsSend(otp,mobile){
+    let options = {authorization :"oST3Je8bKsi6hGZjd9MHx047OmLrWcEDqAufIU51CnXpaBVtRPxqR3ZKJPHyWboQlOpAzstmL78j5cwS" , message : `This is from LY3LEY, Your OTP code is ${otp}` ,  numbers : [mobile]}
 
     fast2sms.sendMessage(options)
     .then((res)=>{
@@ -45,9 +45,8 @@ router.post("/userRegistration", async (req, res) => {
         if (existUser) {
             res.json({ status: false, msg: "Email already exists" });
         } else {
-            smsSend();
             let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
-            console.log(otp);
+            smsSend(otp,body.contact);
             let obj={...body,otp:otp};
             let user = new UserModel(obj);
             let user1 = await user.save();
@@ -76,5 +75,36 @@ router.post("/userLogin", async (req, res) => {
         res.status(400).send(err);
     }
 })
+
+router.patch("/otpVerification",async (req,res)=>{
+    try{
+        let body=req.body;
+        let user=await UserModel.findOne({email:body.email,otp:body.otp});
+        if(user){
+        let user1=await UserModel.findByIdAndUpdate({_id:user._id},{status:"ACTIVE"});
+        res.json({status:true,msg:"Verified"});
+        }else{
+            res.send({status:false,msg:"Incorrect OTP"});
+        }
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
+
+router.post("/resendOtp",async (req,res)=>{
+    try{
+        let body=req.body;
+        let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
+        let user=await UserModel.findOneAndUpdate({email:body.email},{otp:otp});
+        if(user){
+            smsSend(otp,user.contact);
+            res.json({status:true,msg:"Re-send OTP"});
+        }else{
+            res.status(404).json({status:false , msg:"Not found"});
+        }
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
 
 module.exports = router;
