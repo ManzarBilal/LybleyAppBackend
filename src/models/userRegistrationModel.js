@@ -6,6 +6,7 @@ const userSchema= new mongoose.Schema({
     contact:{type:Number,required:true},
     password:{type:String,required:true},
     otp:{type:String},
+    status:{type:String,default:"INACTIVE"},
 },{timestamps:true});
 
 const UserModel = new mongoose.model("users",userSchema);
