@@ -67,6 +67,11 @@ router.post("/userLogin", async (req, res) => {
                 algorithm:"HS256",
                 expiresIn:jwtExpirySeconds
             })
+            if(checkUser.status==="INACTIVE"){
+                let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
+                smsSend(otp,checkUser.contact); 
+                await UserModel.findByIdAndUpdate({_id:checkUser._id},{otp:otp});
+            }
             res.json({ status: true, user: checkUser, msg: "User Login successfully",token:"bearer "+token});
         } else {
             res.json({ status: false, msg: "Incorrect Username and Password" });
@@ -100,11 +105,25 @@ router.post("/resendOtp",async (req,res)=>{
             smsSend(otp,user.contact);
             res.json({status:true,msg:"Re-send OTP"});
         }else{
-            res.status(404).json({status:false , msg:"Not found"});
+            res.json({status:false , msg:"Not found"});
         }
     }catch(err){
         res.status(400).send(err);
     }
 });
+
+router.patch("/forgetPassword",async(req,res)=>{
+       try{
+         let body=req.body;
+         let user=await UserModel.findOneAndUpdate({email:body.email},{password:body.password});
+         if(user){
+            res.json({status:true,msg:"Password changed successfully"});
+         }else{
+            res.json({status:false,msg:"Not found"});
+         }
+       }catch(err){
+        res.status(500).send(err);
+       }
+})
 
 module.exports = router;
