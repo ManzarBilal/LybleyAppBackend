@@ -1,6 +1,5 @@
 const express = require("express");
 const router = new express.Router();
-const fast2sms = require('fast-two-sms');
 const otpGenerator = require('otp-generator')
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
@@ -8,20 +7,9 @@ const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 const UserModel = require("../models/userRegistrationModel");
 const app=express();
-
+const {smsSend,sendMail} =require("../services/service");
 app.use(passport.initialize());
 
-
-function smsSend(otp,mobile){
-    let options = {authorization :"oST3Je8bKsi6hGZjd9MHx047OmLrWcEDqAufIU51CnXpaBVtRPxqR3ZKJPHyWboQlOpAzstmL78j5cwS" , message : `This is from LY3LEY, Your OTP code is ${otp}` ,  numbers : [mobile]}
-
-    fast2sms.sendMessage(options)
-    .then((res)=>{
-        console.log("res",res)
-    }).catch((err)=>{
-      console.log(err);
-    }) 
-  }
 
 const params={
     jwtFromRequest:ExtractJWT.fromAuthHeaderAsBearerToken(),
@@ -41,12 +29,14 @@ const jwtExpirySeconds=300;
 router.post("/userRegistration", async (req, res) => {
     try {
         let body = req.body;
+        let bool=false;
         let existUser = await UserModel.findOne({ email: body.email });
         if (existUser) {
             res.json({ status: false, msg: "Email already exists" });
         } else {
             let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
             smsSend(otp,body.contact);
+            sendMail(body.email,body.password,bool);
             let obj={...body,otp:otp};
             let user = new UserModel(obj);
             let user1 = await user.save();
@@ -103,9 +93,9 @@ router.post("/resendOtp",async (req,res)=>{
         let user=await UserModel.findOneAndUpdate({email:body.email},{otp:otp});
         if(user){
             smsSend(otp,user.contact);
-            res.json({status:true,msg:"Re-send OTP"});
+            res.json({status:true,msg:"Send OTP"});
         }else{
-            res.json({status:false , msg:"Not found"});
+            res.json({status:false , msg:"Something went wrong!"});
         }
     }catch(err){
         res.status(400).send(err);
@@ -115,11 +105,13 @@ router.post("/resendOtp",async (req,res)=>{
 router.patch("/forgetPassword",async(req,res)=>{
        try{
          let body=req.body;
+         let bool=true;
          let user=await UserModel.findOneAndUpdate({email:body.email},{password:body.password});
          if(user){
-            res.json({status:true,msg:"Password changed successfully"});
+            res.json({status:true,msg:"Password changed successfully!"});
+            sendMail(body.email,body.password,bool);
          }else{
-            res.json({status:false,msg:"Not found"});
+            res.json({status:false,msg:"Something went wrong!"});
          }
        }catch(err){
         res.status(500).send(err);
