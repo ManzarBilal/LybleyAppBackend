@@ -1,6 +1,7 @@
 const express = require("express");
 require("./src/db/connection");
-const router = require("./src/routers/userRegistration");
+const user = require("./src/routers/userRegistration");
+const brand = require("./src/routers/brandRegistration");
 const app=express();
 
 app.use(express.json());
@@ -16,7 +17,8 @@ app.use(function (req, res, next){
     );
     next();
 });
-app.use(router);
+app.use(user);
+app.use(brand);
 
 const port = 5000;
 app.listen(port,()=>{
