@@ -19,6 +19,7 @@ function smsSend(otp,mobile){
   }
 
 async function sendMail(email,pass,isForget){
+  console.log(email,pass,isForget);
      let transporter = nodemailer.createTransport({
         host:"smtp.gmail.com",
         port:587,
@@ -43,6 +44,7 @@ try{
              ${isForget ? "" : `Username:<a href="#">${email}</a> <br/>`}
              ${isForget ? "New Password" : "Password"}:<a href="#">${pass}</a>`
      });
+     console.log(info);
 }catch(err){
     console.log("err",err);
 }
