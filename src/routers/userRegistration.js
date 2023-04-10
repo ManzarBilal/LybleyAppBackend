@@ -7,7 +7,7 @@ const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 const UserModel = require("../models/userRegistrationModel");
 const app=express();
-const {smsSend,sendMail} =require("../services/service");
+const {smsSend,sendMail,upload} =require("../services/service");
 app.use(passport.initialize());
 
 
@@ -118,4 +118,7 @@ router.patch("/forgetPassword",async(req,res)=>{
        }
 })
 
+router.post("/upload",upload().single("file-upload"),async (req,res)=>{
+          res.json({data:req.file});
+})
 module.exports = router;

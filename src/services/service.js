@@ -1,6 +1,9 @@
 const fast2sms = require("fast-two-sms");
 const nodemailer =  require("nodemailer");
-
+const multer = require("multer");
+const multers3 = require("multer-s3");
+require('dotenv').config();
+const aws = require("aws-sdk");
 
 function smsSend(otp,mobile){
 
@@ -50,7 +53,36 @@ try{
 }
 }
 
+const s3=new aws.S3({
+  region:process.env.AWS_BUCKET_REGION,
+  accessKeyId:process.env.AWS_ACCESS_KEY,
+  secretAccessKey:process.env.AWS_SECRET_KEY
+})
+
+const upload=()=>multer({
+  storage:multers3({
+    s3,
+    bucket:"lybley-webapp-collection",
+    metadata:function(req,file,cb){
+       cb(null,{fieldName:file.fieldname});
+    },
+    key:async function(req,file,cb){
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null,file.originalname + '-' + uniqueSuffix);
+    }
+  })
+}) 
+
+// function uploadFile(file){
+
+//   upload(req,res,(err)=>{
+//      if(err) return res.send(err.message);
+//      res.json({data:file.files});
+//   })
+// }
+
 module.exports={
     smsSend,
-    sendMail
+    sendMail,
+    upload,
   }

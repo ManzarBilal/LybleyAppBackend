@@ -6,7 +6,7 @@ const brandSchema= new mongoose.Schema({
     contact:{type:Number,required:true},
     password:{type:String,required:true},
    // gstNo:{type:String,required:true},
-   // auth:{type:String,required:true},
+    gstDocument:{type:String,required:true},
     // brandLogo:{type:String},
     // brandBanner:{type:String},
      otp:{type:String},
