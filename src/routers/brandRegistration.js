@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
-const { smsSend,sendMail } = require("../services/service");
+const { smsSend,sendMail, upload } = require("../services/service");
 
 const params = {
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
@@ -15,12 +15,10 @@ const params = {
 
 const jwtExpirySeconds = 300;
 
-router.post("/brandRegistration", async (req, res) => {
+router.post("/brandRegistration",upload().single("gstDocument"),async (req, res) => {
     let body = req.body;
-    console.log(body);
     try {
         let check = await BrandModel.findOne({email:body.email});
-        console.log(check);
         let bool=false;
         if (check) {
             res.json({ status: false, msg: "Email already exists" });
@@ -29,7 +27,7 @@ router.post("/brandRegistration", async (req, res) => {
             let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
             smsSend(otp, body.contact);
             sendMail(body.email,body.password,bool);
-            let obj = { ...body, otp: otp };
+            let obj = { ...body, otp: otp,gstDocument:req.file.location };
             let brand = new BrandModel(obj);
             let newBrand = await brand.save();
             res.json({
