@@ -93,7 +93,7 @@ router.post("/resendOtp",async (req,res)=>{
         let user=await UserModel.findOneAndUpdate({email:body.email},{otp:otp});
         if(user){
             smsSend(otp,user.contact);
-            res.json({status:true,msg:"Send OTP"});
+            res.json({status:true,msg:"OTP sent"});
         }else{
             res.json({status:false , msg:"Something went wrong!"});
         }

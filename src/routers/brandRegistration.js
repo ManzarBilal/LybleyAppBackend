@@ -1,12 +1,12 @@
 const express = require("express");
 const router = new express.Router();
 const BrandModel = require("../models/brandRegistrationModel");
-const otpGenerator = require("fast-two-sms");
+const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
-const { smsSend } = require("../services/service");
+const { smsSend,sendMail } = require("../services/service");
 
 const params = {
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
@@ -17,13 +17,18 @@ const jwtExpirySeconds = 300;
 
 router.post("/brandRegistration", async (req, res) => {
     let body = req.body;
+    console.log(body);
     try {
-        let checkBrand = BrandModel.findOne({ email: body.email });
-        if (checkBrand) {
+        let check = await BrandModel.findOne({email:body.email});
+        console.log(check);
+        let bool=false;
+        if (check) {
             res.json({ status: false, msg: "Email already exists" });
         } else {
+            console.log("else");
             let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
             smsSend(otp, body.contact);
+            sendMail(body.email,body.password,bool);
             let obj = { ...body, otp: otp };
             let brand = new BrandModel(obj);
             let newBrand = await brand.save();
@@ -75,5 +80,38 @@ router.patch("/brandOtpVerification", async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+router.post("/brandResendOtp",async (req,res)=>{
+    try{
+        let body=req.body;
+        let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
+        let brand=await BrandModel.findOneAndUpdate({email:body.email},{otp:otp});
+        if(brand){
+            smsSend(otp,brand.contact);
+            res.json({status:true,msg:"OTP sent"});
+        }else{
+            res.json({status:false , msg:"Something went wrong!"});
+        }
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
+router.patch("/brandForgetPassword",async(req,res)=>{
+    try{
+      let body=req.body;
+      let bool=true;
+      let brand=await BrandModel.findOneAndUpdate({email:body.email},{password:body.password});
+      if(brand){
+         res.json({status:true,msg:"Password changed successfully!"});
+         sendMail(body.email,body.password,bool);
+      }else{
+         res.json({status:false,msg:"Something went wrong!"});
+      }
+    }catch(err){
+     res.status(500).send(err);
+    }
+})
+
 
 module.exports = router;
