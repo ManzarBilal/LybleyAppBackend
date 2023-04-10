@@ -11,6 +11,7 @@ const brandSchema= new mongoose.Schema({
     // brandBanner:{type:String},
      otp:{type:String},
     status:{type:String,default:"INACTIVE"},
+    role:{type:String,default:"BRAND"}
 },{timestamps:true});
 
 const BrandModel = new mongoose.model("brand",brandSchema);
