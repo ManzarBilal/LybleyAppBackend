@@ -73,13 +73,6 @@ const upload=()=>multer({
   })
 }) 
 
-// function uploadFile(file){
-
-//   upload(req,res,(err)=>{
-//      if(err) return res.send(err.message);
-//      res.json({data:file.files});
-//   })
-// }
 
 module.exports={
     smsSend,
