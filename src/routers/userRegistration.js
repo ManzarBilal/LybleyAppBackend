@@ -35,11 +35,11 @@ router.post("/userRegistration", async (req, res) => {
             res.json({ status: false, msg: "Email already exists" });
         } else {
             let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
-            smsSend(otp,body.contact);
-            sendMail(body.email,body.password,bool);
             let obj={...body,otp:otp};
             let user = new UserModel(obj);
             let user1 = await user.save();
+            smsSend(otp,body.contact);
+            sendMail(body.email,body.password,bool);
             res.json({ status: true, msg: "User registration successfully" });
         }
     } catch (err) {
@@ -58,9 +58,9 @@ router.post("/userLogin", async (req, res) => {
                 expiresIn:jwtExpirySeconds
             })
             if(checkUser.status==="INACTIVE"){
-                let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
-                smsSend(otp,checkUser.contact); 
+                let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false }); 
                 await UserModel.findByIdAndUpdate({_id:checkUser._id},{otp:otp});
+                smsSend(otp,checkUser.contact); 
             }
             res.json({ status: true, user: checkUser, msg: "User Login successfully",token:"bearer "+token});
         } else {
@@ -118,7 +118,4 @@ router.patch("/forgetPassword",async(req,res)=>{
        }
 })
 
-router.post("/upload",upload().single("file-upload"),async (req,res)=>{
-          res.json({data:req.file});
-})
 module.exports = router;
