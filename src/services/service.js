@@ -2,8 +2,9 @@ const fast2sms = require("fast-two-sms");
 const nodemailer =  require("nodemailer");
 const multer = require("multer");
 const multers3 = require("multer-s3");
-require('dotenv').config();
 const aws = require("aws-sdk");
+require('dotenv').config();
+//const {S3Client,PutObjectCommand,GetObjectCommand } = require("@aws-sdk/client-s3");
 
 function smsSend(otp,mobile){
 
@@ -22,7 +23,6 @@ function smsSend(otp,mobile){
   }
 
 async function sendMail(email,pass,isForget){
-  console.log(email,pass,isForget);
      let transporter = nodemailer.createTransport({
         host:"smtp.gmail.com",
         port:587,
@@ -47,7 +47,7 @@ try{
              ${isForget ? "" : `Username:<a href="#">${email}</a> <br/>`}
              ${isForget ? "New Password" : "Password"}:<a href="#">${pass}</a>`
      });
-     console.log(info);
+
 }catch(err){
     console.log("err",err);
 }
@@ -73,9 +73,25 @@ const upload=()=>multer({
   })
 }) 
 
+// const storage= multer.memoryStorage();
+// const upload2=()=>multer({storage:storage});
+
+// const upload1= async(file)=>{
+//      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//      const params ={
+//       Bucket:"lybley-webapp-collection",
+//       Key:uniqueSuffix + file.originalname,
+//       Body:file.buffer,
+//       ContentType:file.mimetype
+//      }
+//     const sh= await s3.send(new PutObjectCommand(params));
+//     const get =new GetObjectCommand(params); 
+//     console.log(sh); 
+// }
+
 
 module.exports={
     smsSend,
     sendMail,
-    upload,
+    upload
   }

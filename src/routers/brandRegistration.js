@@ -6,8 +6,8 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
-const { smsSend,sendMail, upload } = require("../services/service");
-
+const { smsSend,sendMail,upload } = require("../services/service");
+const multer=require("multer");
 const params = {
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     secrectOrKey: "jwtsecret6434568"
@@ -23,13 +23,12 @@ router.post("/brandRegistration",upload().single("gstDocument"),async (req, res)
         if (check) {
             res.json({ status: false, msg: "Email already exists" });
         } else {
-            console.log("else");
             let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
-            smsSend(otp, body.contact);
-            sendMail(body.email,body.password,bool);
             let obj = { ...body, otp: otp,gstDocument:req.file.location };
             let brand = new BrandModel(obj);
             let newBrand = await brand.save();
+            smsSend(otp, body.contact);
+            sendMail(body.email,body.password,bool);
             res.json({
                 status: true,
                 msg: "Registerd successfully"
@@ -51,9 +50,9 @@ router.post("/brandLogin", async (req, res) => {
                 expiresIn: jwtExpirySeconds
             })
             if (checkBrand.status === "INACTIVE") {
-                let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
-                smsSend(otp, checkBrand.contact);
+                let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false }); 
                 await BrandModel.findByIdAndUpdate({ _id: checkBrand._id }, { otp: otp });
+                smsSend(otp, checkBrand.contact);
             }
             res.json({ status: true, user: checkBrand, msg: "Login successfully", token: "bearer " + token });
         } else {
@@ -111,5 +110,51 @@ router.patch("/brandForgetPassword",async(req,res)=>{
     }
 })
 
+router.get("/getAllBrands",async (req,res)=>{
+    try{
+        let brands=await BrandModel.find({}).select("id brandName email contact gstNo createdAt brandLogo brandBanner gstDocument");
+        res.send(brands);
+    }catch(err){
+        res.status(400).send(err);
+    }
+})
+
+router.get("/getBrandBy/:id",async (req,res)=>{
+    try{
+        let _id=req.params.id;
+        let brand=await BrandModel.findById(_id).select("id brandName email contact gstNo createdAt brandLogo brandBanner gstDocument");
+        res.send(brand);
+    }catch(err){
+        res.status(404).send("Brand Not found");
+    }
+})
+
+router.patch("/updateBrandBy/:id",async (req,res)=>{
+    try{
+        let _id=req.params.id;
+        let body=req.body;
+        let brand=await BrandModel.findByIdAndUpdate(_id,body,{new:true});
+        res.json({status:true,msg:"Updated"});
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
+
+router.delete("/deleteBrandBy/:id",async (req,res)=>{
+    try{
+        let _id=req.params.id;
+        let brand=await BrandModel.findByIdAndDelete(_id);
+        res.json({status:true,msg:"Deleted"});
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
+// const storage= multer.memoryStorage();
+// const upload3= multer({storage:storage});
+// router.post("/upload",upload3.single("img"),async(req,res)=>{
+//     //console.log(req.file)
+//        const res1=await upload1(req.file);
+//        res.send(res1);
+// });
 
 module.exports = router;
