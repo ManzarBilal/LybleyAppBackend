@@ -140,6 +140,39 @@ router.patch("/updateBrandBy/:id",async (req,res)=>{
     }
 });
 
+router.patch("/updateBrandGstDocumentBy/:id",upload().single("file"),async (req,res)=>{
+    try{
+        let _id=req.params.id;
+        let gstDocument=req.file.location;
+        let brand=await BrandModel.findByIdAndUpdate(_id,{gstDocument:gstDocument},{new:true});
+        res.json({status:true,msg:"Updated"});
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
+
+router.patch("/updateBrandLogoBy/:id",upload().single("file"),async (req,res)=>{
+    try{
+        let _id=req.params.id;
+        let brandLogo=req.file.location;
+        let brand=await BrandModel.findByIdAndUpdate(_id,{brandLogo:brandLogo},{new:true});
+        res.json({status:true,msg:"Updated"});
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
+
+router.patch("/updateBrandBannerBy/:id",upload().single("file"),async (req,res)=>{
+    try{
+        let _id=req.params.id;
+        let brandBanner=req.file.location;
+        let brand=await BrandModel.findByIdAndUpdate(_id,{brandBanner:brandBanner},{new:true});
+        res.json({status:true,msg:"Updated"});
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
+
 router.delete("/deleteBrandBy/:id",async (req,res)=>{
     try{
         let _id=req.params.id;
