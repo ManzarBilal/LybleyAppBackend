@@ -112,7 +112,7 @@ router.patch("/brandForgetPassword",async(req,res)=>{
 
 router.get("/getAllBrands",async (req,res)=>{
     try{
-        let brands=await BrandModel.find({}).select("id brandName email contact address gstNo createdAt brandLogo brandBanner gstDocument");
+        let brands=await BrandModel.find({role:"BRAND"}).select("id brandName email contact address gstNo createdAt brandLogo brandBanner gstDocument");
         res.send(brands);
     }catch(err){
         res.status(400).send(err);
