@@ -8,6 +8,7 @@ const brandSchema= new mongoose.Schema({
     gstNo:{type:String,required:true},
     gstDocument:{type:String,required:true},
     address:{type:String},
+    aboutUs:{type:String},
     brandLogo:{type:String},
     brandBanner:{type:String},
     otp:{type:String},
