@@ -183,6 +183,18 @@ router.delete("/deleteBrandBy/:id",async (req,res)=>{
     }
 });
 
+router.patch("/brandApproval/:id",async(req,res)=>{
+    try{
+        let _id=req.params.id;
+        let body=req.body;
+        let brand=await BrandModel.findByIdAndUpdate(_id,body);
+        let msg=body.approval==="APPROVED" ?  "APPROVED" : "DISAPPROVED";
+        res.json({status:true,msg:msg});
+    }catch(err){
+        res.status(500).send(err);
+    }
+})
+
 // const storage= multer.memoryStorage();
 // const upload3= multer({storage:storage});
 // router.post("/upload",upload3.single("img"),async(req,res)=>{

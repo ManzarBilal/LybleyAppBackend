@@ -13,6 +13,7 @@ const brandSchema= new mongoose.Schema({
     brandBanner:{type:String},
     otp:{type:String},
     status:{type:String,default:"INACTIVE"},
+    approval:{type:String,default:"DISAPPROVE"},
     role:{type:String,default:"BRAND"}
 },{timestamps:true});
 
