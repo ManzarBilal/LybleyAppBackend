@@ -29,7 +29,7 @@ router.post("/addProductCategory",upload().single("categoryImage"),async (req, r
  
 router.get("/getAllProductCategories",async (req,res)=>{
     try{
-        let categories=await BrandCategoryModel.find().select("id categoryName status  createdAt  ");
+        let categories=await BrandCategoryModel.find({})
         res.send(categories);
     }catch(err){
         res.status(400).send(err);
@@ -39,7 +39,7 @@ router.get("/getAllProductCategories",async (req,res)=>{
 router.get("/getProductCategoryBy/:id",async (req,res)=>{
     try{
         let _id=req.params.id;
-        let category=await BrandCategoryModel.findById(_id).select("id categoryName status  createdAt ");
+        let category=await BrandCategoryModel.find({userId:_id});
         res.send(category);
     }catch(err){
         res.status(404).send("Category Not found");
