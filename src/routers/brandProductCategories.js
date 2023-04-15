@@ -49,9 +49,7 @@ router.get("/getProductCategoryBy/:id",async (req,res)=>{
 router.patch("/updateProductCategoryBy/:id",async (req,res)=>{
     try{
         let _id=req.params.id;
-        console.log(_id);
         let body=req.body;
-        body.categoryImage=req.file.location
         let category=await BrandCategoryModel.findByIdAndUpdate(_id,body,{new:true});
         console.log(category);
         res.json({status:true,msg:"Updated category details"});
@@ -60,6 +58,16 @@ router.patch("/updateProductCategoryBy/:id",async (req,res)=>{
     }
 });
 
+router.patch("/updateProductCategoryImageBy/:id",upload().single("categoryImage"),async (req,res)=>{
+    try{
+        let _id=req.params.id;
+        let body={categoryImage:req.file.location};
+        let category=await BrandCategoryModel.findByIdAndUpdate(_id,body,{new:true});
+        res.json({status:true,msg:"File Uploaded successfully"});
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
 
 router.delete("/deleteProductCategoryBy/:id",async (req,res)=>{
     try{
