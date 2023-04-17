@@ -3,10 +3,11 @@ const router = new express.Router();
 const {upload } = require("../services/service");
 const ProductModel=require("../models/brandProductModel");
 
-router.post("/addProduct",async(req,res)=>{
+router.post("/addProduct",upload().single("productImage"),async(req,res)=>{
       try{
         let body=req.body;
-        let product=new ProductModel(body);
+        let obj={...body,productImage:req.file.location};
+        let product=new ProductModel(obj);
         let data=await product.save();
         res.json({status:true,msg:"Product added successfully"});
       }catch(err){
@@ -25,6 +26,17 @@ router.patch("/updateProduct/:id",async(req,res)=>{
     }
 });
 
+router.patch("/updateProductImageBy/:id",upload().single("productImage"),async (req,res)=>{
+  try{
+      let _id=req.params.id;
+      let body={productImage:req.file.location};
+      let product=await ProductModel.findByIdAndUpdate(_id,body,{new:true});
+      res.json({status:true,msg:"File Uploaded successfully"});
+  }catch(err){
+      res.status(500).send(err);
+  }
+});
+
 router.get("/allProducts/:id",async(req,res)=>{
     try{
       let id=req.params.id;
@@ -33,6 +45,15 @@ router.get("/allProducts/:id",async(req,res)=>{
     }catch(err){
       res.status(400).send(err);
     }
+});
+
+router.get("/getAllProducts",async(req,res)=>{
+  try{
+    let products=await ProductModel.find({});
+    res.send(products);
+  }catch(err){
+    res.status(400).send(err);
+  }
 });
 
 router.delete("/deleteProduct/:id",async(req,res)=>{
