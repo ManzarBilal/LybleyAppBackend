@@ -25,6 +25,15 @@ router.patch("/updateProduct/:id",async(req,res)=>{
     }
 });
 
+router.get("/allProductsByBrand/:id",async(req,res)=>{
+  try{
+    let id=req.params.id;
+    let products=await ProductModel.find({userId:id});
+    res.send(products);
+  }catch(err){
+    res.status(400).send(err);
+  }
+});
 router.get("/allProducts/:id",async(req,res)=>{
     try{
       let id=req.params.id;
