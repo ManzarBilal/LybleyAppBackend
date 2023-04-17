@@ -26,6 +26,7 @@ router.patch("/updateProduct/:id",async(req,res)=>{
     }
 });
 
+
 router.patch("/updateProductImageBy/:id",upload().single("productImage"),async (req,res)=>{
   try{
       let _id=req.params.id;
@@ -34,6 +35,17 @@ router.patch("/updateProductImageBy/:id",upload().single("productImage"),async (
       res.json({status:true,msg:"File Uploaded successfully"});
   }catch(err){
       res.status(500).send(err);
+  }
+});
+
+
+router.get("/allProductsByBrand/:id",async(req,res)=>{
+  try{
+    let id=req.params.id;
+    let products=await ProductModel.find({userId:id});
+    res.send(products);
+  }catch(err){
+    res.status(400).send(err);
   }
 });
 
