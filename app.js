@@ -5,6 +5,8 @@ const brand = require("./src/routers/brandRegistration");
 const productCategory=require("./src/routers/brandProductCategories")
 const brandProducts=require("./src/routers/brandProduct");
 const spareParts=require("./src/routers/spareParts");
+const sparePartFault=require("./src/routers/sparePartfaults");
+
 const app=express();
 
 app.use(express.json());
@@ -26,6 +28,7 @@ app.use(brand);
 app.use(productCategory)
 app.use(brandProducts);
 app.use(spareParts);
+app.use(sparePartFault)
 
 const port = 5000;
 app.listen(port,()=>{
