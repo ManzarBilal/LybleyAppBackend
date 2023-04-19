@@ -1,11 +1,15 @@
 const express=require("express");
 const router=new express.Router();
 const sparePartModel=require("../models/sparePartsModel");
+const {upload} =require("../services/service");
 
-router.post("/addSparePart",async(req,res)=>{
+router.post("/addSparePart",upload().array("images"),async(req,res)=>{
        try{
         let body=req.body;
-        let obj=new sparePartModel(body);
+        let files=req.file;
+        let images=files?.map(f1=> f1.location);
+        console.log(files)
+        let obj=new sparePartModel({...body,images:images});
         let data=await obj.save();
         res.json({status:true,msg:"Spare part added successfully"});
        }catch(err){
