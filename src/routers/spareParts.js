@@ -6,7 +6,7 @@ const {upload} =require("../services/service");
 router.post("/addSparePart",upload().array("images"),async(req,res)=>{
        try{
         let body=req.body;
-        let files=req.file;
+        let files=req.files;
         let images=files?.map(f1=> f1.location);
         console.log(files)
         let obj=new sparePartModel({...body,images:images});
