@@ -8,7 +8,6 @@ router.post("/addSparePart",upload().array("images"),async(req,res)=>{
         let body=req.body;
         let files=req.files;
         let images=files?.map(f1=> f1.location);
-        console.log(files)
         let obj=new sparePartModel({...body,images:images});
         let data=await obj.save();
         res.json({status:true,msg:"Spare part added successfully"});
