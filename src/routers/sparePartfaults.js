@@ -27,8 +27,8 @@ router.post("/addFault",async (req, res) => {
  
 router.get("/getAllFault",async (req,res)=>{
     try{
-        let sparePartaults=await sparePartFaultModel.find({})
-        res.send(sparePartaults);
+        let sparePartFault=await sparePartFaultModel.find({})
+        res.send(sparePartFault);
     }catch(err){
         res.status(400).send(err);
     }
@@ -37,8 +37,8 @@ router.get("/getAllFault",async (req,res)=>{
 router.get("/getFaultBy/:id",async (req,res)=>{
     try{
         let _id=req.params.id;
-        let sparePartault=await sparePartFaultModel.find({userId:_id});
-        res.send(sparePartault);
+        let sparePartFault=await sparePartFaultModel.find({userId:_id});
+        res.send(sparePartFault);
     }catch(err){
         res.status(404).send("Fault Not found");
     }
@@ -48,7 +48,7 @@ router.patch("/updateFaultBy/:id",async (req,res)=>{
     try{
         let _id=req.params.id;
         let body=req.body;
-        let sparePartault=await sparePartFaultModel.findByIdAndUpdate(_id,body,{new:true});
+        let sparePartFault=await sparePartFaultModel.findByIdAndUpdate(_id,body,{new:true});
         res.json({status:true,msg:"Updated Fault details"});
     }catch(err){
         res.status(500).send(err);
@@ -59,7 +59,7 @@ router.patch("/updateFaultBy/:id",async (req,res)=>{
 router.delete("/deleteFaultBy/:id",async (req,res)=>{
     try{
         let _id=req.params.id;
-        let sparePartault=await sparePartFaultModel.findByIdAndDelete(_id);
+        let sparePartFault=await sparePartFaultModel.findByIdAndDelete(_id);
         res.json({status:true,msg:"Deleted"});
     }catch(err){
         res.status(500).send(err);
