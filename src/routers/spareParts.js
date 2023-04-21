@@ -45,7 +45,15 @@ router.get("/sparePart/:id",async(req,res)=>{
        res.status(400).send(err);
     }
 });
-
+router.get("/sparePartByuserId/:id",async(req,res)=>{
+    try{
+     let id=req.params.id; 
+     let data=await sparePartModel.find({userId:id});
+     res.send(data); 
+    }catch(err){
+       res.status(400).send(err);
+    }
+});
 router.delete("/deleteSparePart/:id",async(req,res)=>{
     try{
      let _id=req.params.id; 
