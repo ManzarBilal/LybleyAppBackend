@@ -7,6 +7,7 @@ const brandProducts=require("./src/routers/brandProduct");
 const spareParts=require("./src/routers/spareParts");
 const sparePartFault=require("./src/routers/sparePartfaults");
 const addToCart=require("./src/routers/addToCart")
+const videoUpload=require("./src/routers/video");
 
 const app=express();
 
@@ -31,6 +32,7 @@ app.use(brandProducts);
 app.use(spareParts);
 app.use(sparePartFault)
 app.use(addToCart)
+app.use(videoUpload);
 
 const port = 5000;
 app.listen(port,()=>{
