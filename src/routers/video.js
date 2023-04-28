@@ -24,7 +24,14 @@ router.get("/getAllVideos",async(req,res)=>{
         res.status(400).send(err);
       }
 });
-
+router.get("/getAllVideosBybrand/:id",async(req,res)=>{
+  try{
+    let data= await VideoModel.find({brandId:req.params.id});
+    res.send(data);
+  }catch(err){
+    res.status(400).send(err);
+  }
+});
 router.patch("/editVideo/:id",upload().single("video"),async(req,res)=>{
     try{
       let _id=req.params.id;
