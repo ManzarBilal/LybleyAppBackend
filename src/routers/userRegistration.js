@@ -1,6 +1,6 @@
 const express = require("express");
 const router = new express.Router();
-const otpGenerator = require('otp-generator')
+const otpGenerator = require('otp-generator');
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const JWTStrategry = require("passport-jwt").Strategy;
@@ -62,7 +62,7 @@ router.post("/userLogin", async (req, res) => {
                 await UserModel.findByIdAndUpdate({_id:checkUser._id},{otp:otp});
                 smsSend(otp,checkUser.contact); 
             }
-            res.json({ status: true, user: checkUser, msg: "User Login successfully",token:"bearer "+token});
+            res.json({ status: true, user: checkUser, msg: "Logged In successfully",token:"bearer "+token});
         } else {
             res.json({ status: false, msg: "Incorrect Username and Password" });
         }
