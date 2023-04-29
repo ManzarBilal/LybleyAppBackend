@@ -71,6 +71,16 @@ router.post("/userLogin", async (req, res) => {
     }
 })
 
+router.get("/userDetail/:id",async(req,res)=>{
+    try{
+        let _id=req.params.id;
+        let user=await UserModel.findById(_id).select("name email contact");
+        res.send(user);
+    }catch(err){
+        res.status(404).send(err);
+    }
+})
+
 router.patch("/otpVerification",async (req,res)=>{
     try{
         let body=req.body;
