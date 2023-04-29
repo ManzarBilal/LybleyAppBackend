@@ -1,7 +1,6 @@
 const express = require("express");
 const router = new express.Router();
-const { upload } = require("../services/service");
-const multer = require("multer");
+
 const AddToCartModel = require("../models/addToCart");
 
 
@@ -41,7 +40,16 @@ router.get("/getCartItemsById/:id", async (req, res) => {
 })
 
  
- 
+router.patch("/updateAddtoCart/:id",async(req,res)=>{
+    try{
+      let _id=req.params.id;
+      let body=req.body;
+      let updateToCart= await AddToCartModel.findByIdAndUpdate(_id,body);
+      res.json({status:true,msg:"Quantity updated successfully"});
+    }catch(err){
+      res.status(500).send(err);
+    }
+});
 
 router.delete("/deleteCartItemBy/:id", async (req, res) => {
     try {
