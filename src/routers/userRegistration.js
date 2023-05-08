@@ -40,7 +40,28 @@ router.post("/userRegistration", async (req, res) => {
             let user1 = await user.save();
             smsSend(otp,body.contact);
             sendMail(body.email,body.password,bool);
-            res.json({ status: true, msg: "User registration successfully" });
+            res.json({ status: true, msg: "Registration successful" });
+        }
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+router.post("/serviceCenterRegistration",upload().single("document"), async (req, res) => {
+    try {
+        let body = req.body;
+        let bool=false;
+        let existUser = await UserModel.findOne({ email: body.email });
+        if (existUser) {
+            res.json({ status: false, msg: "Email already exists" });
+        } else {
+            let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
+            let obj={...body,document:req.file.location,otp:otp};
+            let user = new UserModel(obj);
+            let user1 = await user.save();
+            smsSend(otp,body.contact);
+            sendMail(body.email,body.password,bool);
+            res.json({ status: true, msg: "Registration successful" });
         }
     } catch (err) {
         res.status(400).send(err);
@@ -74,7 +95,16 @@ router.post("/userLogin", async (req, res) => {
 router.get("/userDetail/:id",async(req,res)=>{
     try{
         let _id=req.params.id;
-        let user=await UserModel.findById(_id).select("name email contact");
+        let user=await UserModel.findById(_id).select("name email contact role document discount");
+        res.send(user);
+    }catch(err){
+        res.status(404).send(err);
+    }
+})
+
+router.get("/allUserDetail/",async(req,res)=>{
+    try{
+        let user=await UserModel.find({}).select("_id name role document discount email contact createdAt");
         res.send(user);
     }catch(err){
         res.status(404).send(err);
@@ -128,4 +158,30 @@ router.patch("/forgetPassword",async(req,res)=>{
        }
 })
 
+router.patch("/verifyReseller/:id",async(req,res)=>{
+    try{
+      let _id=req.params.id;
+      let body=req.body;
+      let user=await UserModel.findByIdAndUpdate(_id,body);
+      res.send("Verified");
+    }catch(err){
+        res.status(500).send(err);
+    }
+})
+
+router.patch("/notVerifyReseller/:id",async(req,res)=>{
+    try{
+      let _id=req.params.id;
+      let body=req.body;
+      let user=await UserModel.findByIdAndUpdate(_id,body);
+      res.send("Not Verified");
+    }catch(err){
+        res.status(500).send(err);
+    }
+})
+
+router.post("/uploadLogo",upload().single("image"),async(req,res)=>{
+       let file=req.file.location;
+       res.send(file);
+})
 module.exports = router;
