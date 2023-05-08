@@ -7,6 +7,7 @@ const addToCartSchema= new mongoose.Schema({
     sparePartName:{type:String,required:true},
     sparePartImage:{type:String,required:true},
     MRP:{type:String,required:true},
+    technician:{type:Boolean},
     sparePartCategory:{type:String,required:true},
     sparePartModel:{type:String,required:true},
     quantity:{type:String,required:true}
