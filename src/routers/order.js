@@ -22,6 +22,17 @@ router.get("/getAllOrder",async(req,res)=>{
     }
 });
 
+router.get("/getOrderById/:id",async(req,res)=>{
+    try{
+        let _id=req.params.id
+       let orders=await Order.findById(_id);
+       res.send(orders);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
+
 router.get("/getOrderByCustomer/:id",async(req,res)=>{
     try{
        let id=req.params.id; 
