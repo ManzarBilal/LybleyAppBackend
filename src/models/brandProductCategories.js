@@ -2,6 +2,7 @@ const mongoose=require("mongoose");
 
 const brandCategorySchema= new mongoose.Schema({
     userId:{type:String,required:true},
+    brandName:{type:String},
     categoryName:{type:String,required:true},
     categoryImage:{type:String,required:true},
     status:{type:String,default:"INACTIVE"},
