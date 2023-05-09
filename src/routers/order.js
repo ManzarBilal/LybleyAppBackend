@@ -32,4 +32,14 @@ router.get("/getOrderByCustomer/:id",async(req,res)=>{
     }
 });
 
+router.get("/getOrderBy/:id",async(req,res)=>{
+    try{
+       let id=req.params.id; 
+       let order=await Order.findOne({customerId:id});
+       res.send(order);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
 module.exports=router;
