@@ -39,7 +39,7 @@ router.post("/userRegistration", async (req, res) => {
             let user = new UserModel(obj);
             let user1 = await user.save();
             smsSend(otp,body.contact);
-            sendMail(body.email,body.password,bool);
+          //  sendMail(body.email,body.password,bool);
             res.json({ status: true, msg: "Registration successful" });
         }
     } catch (err) {
@@ -60,7 +60,7 @@ router.post("/serviceCenterRegistration",upload().single("document"), async (req
             let user = new UserModel(obj);
             let user1 = await user.save();
             smsSend(otp,body.contact);
-            sendMail(body.email,body.password,bool);
+          //  sendMail(body.email,body.password,bool);
             res.json({ status: true, msg: "Registration successful" });
         }
     } catch (err) {
@@ -149,7 +149,7 @@ router.patch("/forgetPassword",async(req,res)=>{
          let user=await UserModel.findOneAndUpdate({email:body.email},{password:body.password});
          if(user){
             res.json({status:true,msg:"Password changed successfully!"});
-            sendMail(body.email,body.password,bool);
+          //  sendMail(body.email,body.password,bool);
          }else{
             res.json({status:false,msg:"Something went wrong!"});
          }
