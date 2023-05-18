@@ -48,6 +48,7 @@ router.get("/sparePart/:id",async(req,res)=>{
        res.status(400).send(err);
     }
 });
+
 router.get("/sparePartByuserId/:id",async(req,res)=>{
     try{
      let id=req.params.id; 
@@ -57,6 +58,40 @@ router.get("/sparePartByuserId/:id",async(req,res)=>{
        res.status(400).send(err);
     }
 });
+
+router.patch("/deleteSparePartImage/:id",async(req,res)=>{
+     try{
+        let _id=req.params.id;
+        let body=req.body;
+        let obj=await sparePartModel.findById(_id);
+        let index=obj.images.findIndex(img=>img===body.img);
+        if(index>=0){
+           let img=obj.images.splice(index,1);
+           let obj1= await sparePartModel.findByIdAndUpdate(_id,{images:obj.images});
+           res.json({status:true,msg:"Deleted"});
+        }else{
+            res.status(404).json({status:false,msg:"Not found"});
+        }
+     }catch(err){
+        res.status(500).send(err);
+     }
+});
+
+
+router.patch("/uploadSPImage/:id",upload().single("image"),async(req,res)=>{
+    try{
+     let _id=req.params.id;
+     let obj= await sparePartModel.findById(_id);
+     obj.images.push(req.file.location);
+     let obj1= await sparePartModel.findByIdAndUpdate(_id,{images:obj.images});
+     res.json({status:true,msg:"Uploaded"});
+    }catch(err){
+     res.status(500).send(err);
+    }
+});
+
+
+
 router.delete("/deleteSparePart/:id",async(req,res)=>{
     try{
      let _id=req.params.id; 
