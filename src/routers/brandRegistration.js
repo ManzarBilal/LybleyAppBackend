@@ -28,7 +28,7 @@ router.post("/brandRegistration",upload().single("gstDocument"),async (req, res)
             let brand = new BrandModel(obj);
             let newBrand = await brand.save();
             smsSend(otp, body.contact);
-            sendMail(body.email,body.password,bool);
+          //  sendMail(body.email,body.password,bool);
             res.json({
                 status: true,
                 msg: "Registerd successfully"
@@ -101,7 +101,7 @@ router.patch("/brandForgetPassword",async(req,res)=>{
       let brand=await BrandModel.findOneAndUpdate({email:body.email},{password:body.password});
       if(brand){
          res.json({status:true,msg:"Password changed successfully!"});
-         sendMail(body.email,body.password,bool);
+        // sendMail(body.email,body.password,bool);
       }else{
          res.json({status:false,msg:"Something went wrong!"});
       }
