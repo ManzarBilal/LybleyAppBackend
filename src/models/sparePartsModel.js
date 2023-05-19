@@ -10,6 +10,7 @@ const sparePartSchema= new moongoose.Schema({
     partName:{type:String,required:true},
     category:{type:String,required:true},
     productModel:{type:String,required:true},
+    partNo:{type:String,required:true},
     faultType:{type:Array,required:true},
     technician:{type:Number,required:true},
     images:{type:Array,required:true},
