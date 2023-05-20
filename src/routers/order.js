@@ -1,6 +1,7 @@
 const express=require("express");
 const router=new express.Router();
 const Order=require("../models/order");
+const Technician=require("../models/technicianStatus");
 
 router.post("/createOrder",async(req,res)=>{
     try{
@@ -8,6 +9,35 @@ router.post("/createOrder",async(req,res)=>{
       let order=new Order(body);
       let order1=await order.save();
       res.send(order1);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
+//Technician Status for Order
+
+router.post("/createTechnicianStatus",async(req,res)=>{
+    try{
+      let body=req.body;
+      let exist = await Technician.findOne({orderId:body.orderId});
+      if (exist) {
+        await Technician.updateOne({orderId:body.orderId},{status:body.status});
+        res.send({status:true,msg:"Updated"});
+      }else{
+      let status=new Technician(body);
+      let status1=await status.save();
+      res.send(status1);
+      }
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
+router.get("/getTechnicianStatus/:id",async(req,res)=>{
+    try{
+       let id=req.params.id
+       let status=await Technician.findOne({orderId:id});
+       res.send(status);
     }catch(err){
         res.status(400).send(err);
     }
