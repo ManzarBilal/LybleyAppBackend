@@ -39,6 +39,16 @@ router.get("/allSparePart",async(req,res)=>{
      }
 });
 
+router.get("/allSparePartForAdmin",async(req,res)=>{
+    try{
+     let search=req.query.sparePart; 
+     let data=await sparePartModel.find({});
+     res.send(data); 
+    }catch(err){
+       res.status(400).send(err);
+    }
+});
+
 router.get("/sparePart/:id",async(req,res)=>{
     try{
      let id=req.params.id; 
