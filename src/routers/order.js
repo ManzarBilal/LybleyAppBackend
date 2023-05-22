@@ -33,10 +33,35 @@ router.post("/createTechnicianStatus",async(req,res)=>{
     }
 });
 
+router.patch("/updateClosed/:id",async(req,res)=>{
+    try{
+        let body=req.body;
+        let id=req.params.id;
+        let exist = await Technician.findOne({orderId:id});
+        if (exist) {
+          await Technician.updateOne({orderId:id},{closed:body.closed});
+          res.send({status:true,msg:"Updated"});
+        }else{
+        res.json({status:false,msg:"Not found"});
+        }
+      }catch(err){
+          res.status(400).send(err);
+      }
+});
+
 router.get("/getTechnicianStatus/:id",async(req,res)=>{
     try{
        let id=req.params.id
        let status=await Technician.findOne({orderId:id});
+       res.send(status);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
+router.get("/getAllTechnicianStatus",async(req,res)=>{
+    try{
+       let status=await Technician.find({});
        res.send(status);
     }catch(err){
         res.status(400).send(err);
@@ -54,7 +79,7 @@ router.get("/getAllOrder",async(req,res)=>{
 
 router.get("/getOrderById/:id",async(req,res)=>{
     try{
-        let _id=req.params.id
+       let _id=req.params.id
        let orders=await Order.findById(_id);
        res.send(orders);
     }catch(err){
