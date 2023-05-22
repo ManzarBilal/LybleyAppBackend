@@ -30,9 +30,9 @@ router.post("/userRegistration", async (req, res) => {
     try {
         let body = req.body;
         let bool=false;
-        let existUser = await UserModel.findOne({ email: body.email });
+        let existUser = await UserModel.findOne({ email: body.email, contact:body.contact });
         if (existUser) {
-            res.json({ status: false, msg: "Email already exists" });
+            res.json({ status: false, msg: "Email or phone already exists" });
         } else {
             let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
             let obj={...body,otp:otp};
@@ -51,7 +51,7 @@ router.post("/serviceCenterRegistration",upload().single("document"), async (req
     try {
         let body = req.body;
         let bool=false;
-        let existUser = await UserModel.findOne({ email: body.email });
+        let existUser = await UserModel.findOne({ email: body.email,contact:body.contact });
         if (existUser) {
             res.json({ status: false, msg: "Email already exists" });
         } else {
