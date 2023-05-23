@@ -7,9 +7,9 @@ const userSchema= new mongoose.Schema({
     role:{type:String,required:true},
     document:{type:String},
     discount:{type:String,default:"NOT_VERIFIED"},
-    password:{type:String,required:true},
+    // password:{type:String,required:true},
     otp:{type:String},
-    status:{type:String,default:"INACTIVE"},
+    // status:{type:String,default:"INACTIVE"},
 },{timestamps:true});
 
 const UserModel = new mongoose.model("users",userSchema);
