@@ -30,8 +30,9 @@ router.post("/userRegistration", async (req, res) => {
     try {
         let body = req.body;
         let bool=false;
-        let existUser = await UserModel.findOne({ email: body.email, contact:body.contact });
-        if (existUser) {
+        let existUser1 = await UserModel.findOne({contact:body.contact });
+        let existUser2 = await UserModel.findOne({email:body.email });
+        if (existUser1 || existUser2) {
             res.json({ status: false, msg: "Email or phone already exists" });
         } else {
             let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
@@ -51,9 +52,10 @@ router.post("/serviceCenterRegistration",upload().single("document"), async (req
     try {
         let body = req.body;
         let bool=false;
-        let existUser = await UserModel.findOne({ email: body.email,contact:body.contact });
-        if (existUser) {
-            res.json({ status: false, msg: "Email already exists" });
+        let existUser1 = await UserModel.findOne({contact:body.contact });
+        let existUser2 = await UserModel.findOne({ email: body.email });
+        if (existUser1 || existUser2) {
+            res.json({ status: false, msg: "Email or phone already exists" });
         } else {
             let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
             let obj={...body,document:req.file.location,otp:otp};
@@ -92,6 +94,23 @@ router.post("/userLogin", async (req, res) => {
     }
 })
 
+router.post("/userPhoneLogin", async (req, res) => {
+    try {
+        let body = req.body;
+        let checkUser = await UserModel.findOne({ contact: body.contact });
+        if(checkUser){
+        let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false }); 
+        await UserModel.findByIdAndUpdate({_id:checkUser._id},{otp:otp});
+        smsSend(otp,checkUser.contact); 
+        res.json({ status: true, msg: "success"});
+    } else {
+            res.json({ status: false, msg: "Incorrect Phone number" });
+        }
+    } catch (err) {
+        res.status(400).send(err);
+    }
+})
+
 router.get("/userDetail/:id",async(req,res)=>{
     try{
         let _id=req.params.id;
@@ -118,6 +137,25 @@ router.patch("/otpVerification",async (req,res)=>{
         if(user){
         let user1=await UserModel.findByIdAndUpdate({_id:user._id},{status:"ACTIVE"});
         res.json({status:true,msg:"Verified"});
+        }else{
+            res.send({status:false,msg:"Incorrect OTP"});
+        }
+    }catch(err){
+        res.status(500).send(err);
+    }
+});
+
+router.post("/otpPhoneVerification",async (req,res)=>{
+    try{
+        let body=req.body;
+        let user=await UserModel.findOne({contact:body.contact,otp:body.otp});
+        if(user){
+            let payload={_id:user._id};
+            let token=jwt.sign(payload,params.secrectOrKey,{
+                algorithm:"HS256",
+                expiresIn:jwtExpirySeconds
+            })
+          res.json({status:true,user:user,msg:"Logged in successful",token:token});
         }else{
             res.send({status:false,msg:"Incorrect OTP"});
         }
