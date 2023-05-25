@@ -19,6 +19,7 @@
   "homepage": "https://github.com/ManzarBilal/LybleyAppBackend#readme",
   "dependencies": {
     "aws-sdk": "^2.1353.0",
+    "axios": "^1.4.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "fast-two-sms": "^3.0.0",

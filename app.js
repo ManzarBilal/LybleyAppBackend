@@ -11,6 +11,7 @@ const videoUpload=require("./src/routers/video");
 const orders=require("./src/routers/order");
 const dasboard=require("./src/routers/dashboard");
 const payment=require("./src/routers/payment");
+const delivery=require("./src/routers/delivery");
 
 const app=express();
 
@@ -39,6 +40,7 @@ app.use(videoUpload);
 app.use(orders);
 app.use(dasboard);
 app.use(payment);
+app.use(delivery);
 
 const port = process.env.PORT || 5000;
 app.listen(port,()=>{
