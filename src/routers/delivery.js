@@ -21,5 +21,35 @@ router.post("/createDeliveryOrder",async(req,res)=>{
           res.status(400).send(err.response.data);
        }
 });
-
+router.get("/trackOrder/:id",async(req,res)=>{
+   try{
+      let body=req.body;
+      let id =req.params.id
+      let response=await axios.get(`https://apiv2.shiprocket.in/v1/external/courier/track?order_id=${id}`,{headers:{'Authorization':`Bearer ${token}`}});
+      let {data}=response;
+      res.send(data);
+   }catch(err){
+      res.status(400).send(err.response.data);
+   }
+});
+router.post("/cancelOrder",async(req,res)=>{
+   try{
+      let body=req.body;
+      let response=await axios.post("https://apiv2.shiprocket.in/v1/external/orders/cancel",body,{headers:{'Authorization':`Bearer ${token}`}});
+      let {data}=response;
+      res.send(data);
+   }catch(err){
+      res.status(400).send(err.response.data);
+   }
+});
+router.post("/returnOrder",async(req,res)=>{
+   try{
+      let body=req.body;
+      let response=await axios.post("https://apiv2.shiprocket.in/v1/external/orders/create/return",body,{headers:{'Authorization':`Bearer ${token}`}});
+      let {data}=response;
+      res.send(data);
+   }catch(err){
+      res.status(400).send(err.response.data);
+   }
+});
 module.exports=router;
