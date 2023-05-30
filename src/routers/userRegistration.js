@@ -6,16 +6,16 @@ const passport = require("passport");
 const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 const UserModel = require("../models/userRegistrationModel");
-const app=express();
-const {smsSend,sendMail,upload} =require("../services/service");
+const app = express();
+const { smsSend, sendMail, upload } = require("../services/service");
 app.use(passport.initialize());
 
 
-const params={
-    jwtFromRequest:ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secrectOrKey:"jwtsecret536372826"
+const params = {
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secrectOrKey: "jwtsecret536372826"
 }
-const jwtExpirySeconds=300;
+const jwtExpirySeconds = 300;
 
 // let strategy = new JWTStrategry(params,function(token,done){
 //     console.log("In JWTStrategy",token);
@@ -29,18 +29,18 @@ const jwtExpirySeconds=300;
 router.post("/userRegistration", async (req, res) => {
     try {
         let body = req.body;
-        let bool=false;
-        let existUser1 = await UserModel.findOne({contact:body.contact });
-        let existUser2 = await UserModel.findOne({email:body.email });
+        let bool = false;
+        let existUser1 = await UserModel.findOne({ contact: body.contact });
+        let existUser2 = await UserModel.findOne({ email: body.email });
         if (existUser1 || existUser2) {
             res.json({ status: false, msg: "Email or phone already exists" });
         } else {
-            let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
-            let obj={...body,otp:otp};
+            let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+            let obj = { ...body, otp: otp };
             let user = new UserModel(obj);
             let user1 = await user.save();
-            smsSend(otp,body.contact);
-          //  sendMail(body.email,body.password,bool);
+            smsSend(otp, body.contact);
+            //  sendMail(body.email,body.password,bool);
             res.json({ status: true, msg: "Registration successful" });
         }
     } catch (err) {
@@ -48,21 +48,21 @@ router.post("/userRegistration", async (req, res) => {
     }
 });
 
-router.post("/serviceCenterRegistration",upload().single("document"), async (req, res) => {
+router.post("/serviceCenterRegistration", upload().single("document"), async (req, res) => {
     try {
         let body = req.body;
-        let bool=false;
-        let existUser1 = await UserModel.findOne({contact:body.contact });
+        let bool = false;
+        let existUser1 = await UserModel.findOne({ contact: body.contact });
         let existUser2 = await UserModel.findOne({ email: body.email });
         if (existUser1 || existUser2) {
             res.json({ status: false, msg: "Email or phone already exists" });
         } else {
-            let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
-            let obj={...body,document:req.file.location,otp:otp};
+            let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+            let obj = { ...body, document: req.file.location, otp: otp };
             let user = new UserModel(obj);
             let user1 = await user.save();
-            smsSend(otp,body.contact);
-          //  sendMail(body.email,body.password,bool);
+            smsSend(otp, body.contact);
+            //  sendMail(body.email,body.password,bool);
             res.json({ status: true, msg: "Registration successful" });
         }
     } catch (err) {
@@ -75,17 +75,17 @@ router.post("/userLogin", async (req, res) => {
         let body = req.body;
         let checkUser = await UserModel.findOne({ email: body.email, password: body.password });
         if (checkUser) {
-            let payload={_id:checkUser._id};
-            let token=jwt.sign(payload,params.secrectOrKey,{
-                algorithm:"HS256",
-                expiresIn:jwtExpirySeconds
+            let payload = { _id: checkUser._id };
+            let token = jwt.sign(payload, params.secrectOrKey, {
+                algorithm: "HS256",
+                expiresIn: jwtExpirySeconds
             })
-            if(checkUser.status==="INACTIVE"){
-                let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false }); 
-                await UserModel.findByIdAndUpdate({_id:checkUser._id},{otp:otp});
-                smsSend(otp,checkUser.contact); 
+            if (checkUser.status === "INACTIVE") {
+                let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+                await UserModel.findByIdAndUpdate({ _id: checkUser._id }, { otp: otp });
+                smsSend(otp, checkUser.contact);
             }
-            res.json({ status: true, user: checkUser, msg: "Logged In successfully",token:"bearer "+token});
+            res.json({ status: true, user: checkUser, msg: "Logged In successfully", token: "bearer " + token });
         } else {
             res.json({ status: false, msg: "Incorrect Username and Password" });
         }
@@ -98,12 +98,12 @@ router.post("/userPhoneLogin", async (req, res) => {
     try {
         let body = req.body;
         let checkUser = await UserModel.findOne({ contact: body.contact });
-        if(checkUser){
-        let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false }); 
-        await UserModel.findByIdAndUpdate({_id:checkUser._id},{otp:otp});
-        smsSend(otp,checkUser.contact); 
-        res.json({ status: true, msg: "success"});
-    } else {
+        if (checkUser) {
+            let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+            await UserModel.findByIdAndUpdate({ _id: checkUser._id }, { otp: otp });
+            smsSend(otp, checkUser.contact);
+            res.json({ status: true, msg: "success" });
+        } else {
             res.json({ status: false, msg: "Incorrect Phone number" });
         }
     } catch (err) {
@@ -111,115 +111,136 @@ router.post("/userPhoneLogin", async (req, res) => {
     }
 })
 
-router.get("/userDetail/:id",async(req,res)=>{
-    try{
-        let _id=req.params.id;
-        let user=await UserModel.findById(_id).select("name email contact role document discount");
+router.get("/userDetail/:id", async (req, res) => {
+    try {
+        let _id = req.params.id;
+        let user = await UserModel.findById(_id).select("_id name email contact image role document discount");
         res.send(user);
-    }catch(err){
+    } catch (err) {
         res.status(404).send(err);
     }
 })
 
-router.get("/allUserDetail/",async(req,res)=>{
-    try{
-        let user=await UserModel.find({}).select("_id name role document discount email contact createdAt");
+router.get("/allUserDetail/", async (req, res) => {
+    try {
+        let user = await UserModel.find({}).select("_id name role document image discount email contact createdAt");
         res.send(user);
-    }catch(err){
+    } catch (err) {
         res.status(404).send(err);
     }
 })
 
-router.patch("/otpVerification",async (req,res)=>{
-    try{
-        let body=req.body;
-        let user=await UserModel.findOne({email:body.email,otp:body.otp});
-        if(user){
-        let user1=await UserModel.findByIdAndUpdate({_id:user._id},{status:"ACTIVE"});
-        res.json({status:true,msg:"Verified"});
-        }else{
-            res.send({status:false,msg:"Incorrect OTP"});
+router.patch("/updateUserDetail/:id", async (req, res) => {
+    try {
+        let _id = req.params.id;
+        let user = await UserModel.findByIdAndUpdate(_id, req.body);
+        res.json({ status: true, msg: "Updated" });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+router.patch("/uploadUserImage/:id", upload().single("image"), async (req, res) => {
+    try {
+        let _id = req.params.id;
+        let file = req.file.location;
+        let user = await UserModel.findByIdAndUpdate(_id, {image:file});
+        res.json({ status: true, msg: "Uploaded" });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+router.patch("/otpVerification", async (req, res) => {
+    try {
+        let body = req.body;
+        let user = await UserModel.findOne({ email: body.email, otp: body.otp });
+        if (user) {
+            let user1 = await UserModel.findByIdAndUpdate({ _id: user._id }, { status: "ACTIVE" });
+            res.json({ status: true, msg: "Verified" });
+        } else {
+            res.send({ status: false, msg: "Incorrect OTP" });
         }
-    }catch(err){
+    } catch (err) {
         res.status(500).send(err);
     }
 });
 
-router.post("/otpPhoneVerification",async (req,res)=>{
-    try{
-        let body=req.body;
-        let user=await UserModel.findOne({contact:body.contact,otp:body.otp});
-        if(user){
-            let payload={_id:user._id};
-            let token=jwt.sign(payload,params.secrectOrKey,{
-                algorithm:"HS256",
-                expiresIn:jwtExpirySeconds
+router.post("/otpPhoneVerification", async (req, res) => {
+    try {
+        let body = req.body;
+        let user = await UserModel.findOne({ contact: body.contact, otp: body.otp });
+        if (user) {
+            let payload = { _id: user._id };
+            let token = jwt.sign(payload, params.secrectOrKey, {
+                algorithm: "HS256",
+                expiresIn: jwtExpirySeconds
             })
-          res.json({status:true,user:user,msg:"Logged in successful",token:token});
-        }else{
-            res.send({status:false,msg:"Incorrect OTP"});
+            res.json({ status: true, user: user, msg: "Logged in successful", token: token });
+        } else {
+            res.send({ status: false, msg: "Incorrect OTP" });
         }
-    }catch(err){
+    } catch (err) {
         res.status(500).send(err);
     }
 });
 
-router.post("/resendOtp",async (req,res)=>{
-    try{
-        let body=req.body;
-        let otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false,lowerCaseAlphabets:false });
-        let user=await UserModel.findOneAndUpdate({email:body.email},{otp:otp});
-        if(user){
-            smsSend(otp,user.contact);
-            res.json({status:true,msg:"OTP sent"});
-        }else{
-            res.json({status:false , msg:"Something went wrong!"});
+router.post("/resendOtp", async (req, res) => {
+    try {
+        let body = req.body;
+        let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+        let user = await UserModel.findOneAndUpdate({ email: body.email }, { otp: otp });
+        if (user) {
+            smsSend(otp, user.contact);
+            res.json({ status: true, msg: "OTP sent" });
+        } else {
+            res.json({ status: false, msg: "Something went wrong!" });
         }
-    }catch(err){
+    } catch (err) {
         res.status(400).send(err);
     }
 });
 
-router.patch("/forgetPassword",async(req,res)=>{
-       try{
-         let body=req.body;
-         let bool=true;
-         let user=await UserModel.findOneAndUpdate({email:body.email},{password:body.password});
-         if(user){
-            res.json({status:true,msg:"Password changed successfully!"});
-          //  sendMail(body.email,body.password,bool);
-         }else{
-            res.json({status:false,msg:"Something went wrong!"});
-         }
-       }catch(err){
-        res.status(500).send(err);
-       }
-})
-
-router.patch("/verifyReseller/:id",async(req,res)=>{
-    try{
-      let _id=req.params.id;
-      let body=req.body;
-      let user=await UserModel.findByIdAndUpdate(_id,body);
-      res.send("Verified");
-    }catch(err){
+router.patch("/forgetPassword", async (req, res) => {
+    try {
+        let body = req.body;
+        let bool = true;
+        let user = await UserModel.findOneAndUpdate({ email: body.email }, { password: body.password });
+        if (user) {
+            res.json({ status: true, msg: "Password changed successfully!" });
+            //  sendMail(body.email,body.password,bool);
+        } else {
+            res.json({ status: false, msg: "Something went wrong!" });
+        }
+    } catch (err) {
         res.status(500).send(err);
     }
 })
 
-router.patch("/notVerifyReseller/:id",async(req,res)=>{
-    try{
-      let _id=req.params.id;
-      let body=req.body;
-      let user=await UserModel.findByIdAndUpdate(_id,body);
-      res.send("Not Verified");
-    }catch(err){
+router.patch("/verifyReseller/:id", async (req, res) => {
+    try {
+        let _id = req.params.id;
+        let body = req.body;
+        let user = await UserModel.findByIdAndUpdate(_id, body);
+        res.send("Verified");
+    } catch (err) {
         res.status(500).send(err);
     }
 })
 
-router.post("/uploadLogo",upload().single("image"),async(req,res)=>{
-       let file=req.file.location;
-       res.send(file);
+router.patch("/notVerifyReseller/:id", async (req, res) => {
+    try {
+        let _id = req.params.id;
+        let body = req.body;
+        let user = await UserModel.findByIdAndUpdate(_id, body);
+        res.send("Not Verified");
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+router.post("/uploadLogo", upload().single("image"), async (req, res) => {
+    let file = req.file.location;
+    res.send(file);
 })
 module.exports = router;
