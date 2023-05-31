@@ -8,6 +8,9 @@ const orderSchema=new mongoose.Schema({
      address:{type:String,required:true},
      address2:{type:String},
      items:{type:Array,required:true},
+     shipOrderId:{type:Number},
+     shipmentId:{type:Number},
+     status:{type:String,default:"ORDER"},
      pin:{type:String,required:true},
      state:{type:String,required:true},
      city:{type:String,required:true}
