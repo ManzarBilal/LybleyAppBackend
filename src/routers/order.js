@@ -49,6 +49,17 @@ router.patch("/updateClosed/:id",async(req,res)=>{
       }
 });
 
+router.patch("/updateShipOrderId/:id",async(req,res)=>{
+    try{
+       let body=req.body;
+       let _id=req.params.id;
+       let order=await Order.findByIdAndUpdate(_id,body);
+       res.json({status:true,msg:"Updated"}); 
+    }catch(err){
+       res.status(500).send(err);
+    }
+});
+
 router.get("/getTechnicianStatus/:id",async(req,res)=>{
     try{
        let id=req.params.id
