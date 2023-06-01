@@ -32,6 +32,18 @@ router.get("/trackOrder/:id",async(req,res)=>{
       res.status(400).send(err.response.data);
    }
 });
+
+router.get("/getSpecificOrder/:id",async(req,res)=>{
+   try{
+      let id =req.params.id
+      let response=await axios.get(`https://apiv2.shiprocket.in/v1/external/orders/show/${id}`,{headers:{'Authorization':`Bearer ${token}`}});
+      let {data}=response;
+      res.send(data);
+   }catch(err){
+      res.status(400).send(err.response.data);
+   }
+});
+
 router.post("/cancelOrder",async(req,res)=>{
    try{
       let body=req.body;
