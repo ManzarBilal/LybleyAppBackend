@@ -63,6 +63,25 @@ router.post("/brandLogin", async (req, res) => {
     }
 })
 
+router.patch("/updateTotalPay/:id",async(req,res)=>{
+    try{
+      let _id=req.params.id; 
+      let body=req.body;
+      let brand=await BrandModel.findById(_id);
+      if(brand.totalDue===0){
+        res.send("No Payment Due");
+      }else if(brand.totalDue<body.totalPay){
+        res.send("Payment due is less than Total Payment");
+      }
+      else{
+      let brand1=await BrandModel.findByIdAndUpdate(_id,{totalPay:brand.totalPay+body.totalPay,totalDue:brand.totalDue-body.totalPay},{new:true});
+      res.send(brand1);
+      }
+    }catch(err){
+    res.status(500).send(err);
+    }
+});
+
 router.patch("/brandOtpVerification", async (req, res) => {
     try {
         let body = req.body;
@@ -112,7 +131,7 @@ router.patch("/brandForgetPassword",async(req,res)=>{
 
 router.get("/getAllBrands",async (req,res)=>{
     try{
-        let brands=await BrandModel.find({role:"BRAND"}).select("id brandName email contact address approval aboutUs gstNo createdAt brandLogo brandBanner gstDocument");
+        let brands=await BrandModel.find({role:"BRAND"}).select("id totalPay totalDue brandName email contact address approval aboutUs gstNo createdAt brandLogo brandBanner gstDocument");
         res.send(brands);
     }catch(err){
         res.status(400).send(err);

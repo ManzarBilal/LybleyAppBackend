@@ -12,6 +12,8 @@ const brandSchema= new mongoose.Schema({
     brandLogo:{type:String},
     brandBanner:{type:String},
     otp:{type:String},
+    totalPay:{type:Number,default:0},
+    totalDue:{type:Number,default:0},
     status:{type:String,default:"INACTIVE"},
     approval:{type:String,default:"DISAPPROVED"},
     role:{type:String,default:"BRAND"}
