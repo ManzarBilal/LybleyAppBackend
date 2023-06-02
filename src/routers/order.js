@@ -98,6 +98,16 @@ router.get("/getOrderById/:id",async(req,res)=>{
     }
 });
 
+router.get("/getOrderBrand/:id",async(req,res)=>{
+    try{
+       let id=req.params.id
+       let orders=await Order.find({});
+       let orders1=orders.filter(ord=>ord.items.find(f1=>f1.brandId===id));
+       res.send(orders1);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
 
 router.get("/getOrderByCustomer/:id",async(req,res)=>{
     try{
