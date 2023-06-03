@@ -70,9 +70,9 @@ router.patch("/updateTotalPay/:id",async(req,res)=>{
       let body=req.body;
       let brand=await BrandModel.findById(_id);
       if(brand.totalDue===0){
-        res.send("No Payment Due");
+        res.json({status:true,msg:"No Payment Due"});
       }else if(brand.totalDue<body.totalPay){
-        res.send("Payment due is less than Total Payment");
+        res.json({status:true,msg:"Payment due is less than Total Payment"});
       }
       else{
       let brand1=await BrandModel.findByIdAndUpdate(_id,{totalPay:brand.totalPay+body.totalPay,totalDue:brand.totalDue-body.totalPay},{new:true});
