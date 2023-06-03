@@ -2,10 +2,13 @@ const express=require("express");
 const router=new express.Router();
 const Order=require("../models/order");
 const Technician=require("../models/technicianStatus");
+const BrandModel=require("../models/brandRegistrationModel");
 
 router.post("/createOrder",async(req,res)=>{
     try{
       let body=req.body;
+      let ids=body.items.map(f1=>({id:f1.brandId,mrp:f1.MRP*f1.quantity}));
+      ids.map(async (id)=> await BrandModel.updateOne({_id:id.id},{revenue:revenue+id.mrp}));
       let order=new Order(body);
       let order1=await order.save();
       res.send(order1);
