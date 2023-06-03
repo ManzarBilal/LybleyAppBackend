@@ -98,7 +98,7 @@ router.get("/getTransactionBy/:id",async(req,res)=>{
     try{
        let id=req.params.id
        let transaction=await TransactionModel.find({brandId:id});
-       res.send(transaction);
+       res.send(transaction.reverse());
     }catch(err){
       res.status(400).send(err);
     }
