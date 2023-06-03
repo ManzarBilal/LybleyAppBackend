@@ -10,7 +10,7 @@ router.post("/createOrder",async(req,res)=>{
       let ids=body.items.map(f1=>({id:f1.brandId,mrp:f1.MRP*f1.quantity}));
       ids.map(async (id)=>{
       let br=await BrandModel.findOne({_id:id.id});
-      await BrandModel.updateOne({_id:id.id},{revenue:br.revenue+id.mrp})
+      await BrandModel.updateOne({_id:id.id},{revenue:br.revenue+id.mrp,totalDue:br.totalDue+id.mrp});
     });
 
       let order=new Order(body);
