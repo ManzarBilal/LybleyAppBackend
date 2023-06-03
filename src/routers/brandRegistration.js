@@ -1,6 +1,7 @@
 const express = require("express");
 const router = new express.Router();
 const BrandModel = require("../models/brandRegistrationModel");
+const TransactionModel=require("../models/brandTransaction");
 const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
@@ -75,10 +76,31 @@ router.patch("/updateTotalPay/:id",async(req,res)=>{
       }
       else{
       let brand1=await BrandModel.findByIdAndUpdate(_id,{totalPay:brand.totalPay+body.totalPay,totalDue:brand.totalDue-body.totalPay},{new:true});
+      let trsn=new TransactionModel({brandId:_id,totalPay:body.totalPay,totalDue:brand1.totalDue});
+      await trsn.save();
       res.send(brand1);
       }
     }catch(err){
     res.status(500).send(err);
+    }
+});
+
+router.get("/getAllTransaction",async(req,res)=>{
+    try{
+       let transaction=await TransactionModel.find({});
+       res.send(transaction);
+    }catch(err){
+      res.status(400).send(err);
+    }
+});
+
+router.get("/getTransactionBy/:id",async(req,res)=>{
+    try{
+       let id=req.params.id
+       let transaction=await TransactionModel.find({brandId:id});
+       res.send(transaction);
+    }catch(err){
+      res.status(400).send(err);
     }
 });
 
@@ -131,7 +153,7 @@ router.patch("/brandForgetPassword",async(req,res)=>{
 
 router.get("/getAllBrands",async (req,res)=>{
     try{
-        let brands=await BrandModel.find({role:"BRAND"}).select("id totalPay totalDue brandName email contact address approval aboutUs gstNo createdAt brandLogo brandBanner gstDocument");
+        let brands=await BrandModel.find({role:"BRAND"}).select("id revenue totalPay totalDue brandName email contact address approval aboutUs gstNo createdAt brandLogo brandBanner gstDocument");
         res.send(brands);
     }catch(err){
         res.status(400).send(err);
@@ -141,7 +163,7 @@ router.get("/getAllBrands",async (req,res)=>{
 router.get("/getBrandBy/:id",async (req,res)=>{
     try{
         let _id=req.params.id;
-        let brand=await BrandModel.findById(_id).select("id brandName email contact address approval aboutUs gstNo createdAt brandLogo brandBanner gstDocument");
+        let brand=await BrandModel.findById(_id).select("id revenue totalPay totalDue brandName email contact address approval aboutUs gstNo createdAt brandLogo brandBanner gstDocument");
         res.send(brand);
     }catch(err){
         res.status(404).send("Brand Not found");
