@@ -60,7 +60,9 @@ router.patch("/updateShipOrderId/:id",async(req,res)=>{
     try{
        let body=req.body;
        let _id=req.params.id;
-       let order=await Order.findByIdAndUpdate(_id,body);
+       let order=await Order.findByIdAndUpdate(_id,{status:body.status});
+       let br=await BrandModel.findOne({_id:body.brandId});
+       let brand=await BrandModel.updateOne({_id:body.brandId},{revenue:br.revenue-(body.MRP*body.quantity),totalDue:br.totalDue-(body.MRP*body.quantity)}); 
        res.json({status:true,msg:"Updated"}); 
     }catch(err){
        res.status(500).send(err);
