@@ -59,14 +59,14 @@ router.patch("/updateClosed/:id",async(req,res)=>{
 router.patch("/updateShipOrderId/:id",async(req,res)=>{
     try{
        let body=req.body;
-       console.log(body);
        let _id=req.params.id;
+       if(body.status==="DELIVER"){
        let order=await Order.findByIdAndUpdate(_id,{status:body.status});
-       console.log(order);
-       let br=await BrandModel.findOne({_id:body.brandId});
-       console.log(br);
-       let brand=await BrandModel.updateOne({_id:body.brandId},{revenue:br.revenue-(body.MRP*body.quantity),totalDue:br.totalDue-(body.MRP*body.quantity)});
-       console.log(brand); 
+       }else{
+        let order=await Order.findByIdAndUpdate(_id,{status:body.status});
+        let br=await BrandModel.findOne({_id:body.brandId});
+        let brand=await BrandModel.updateOne({_id:body.brandId},{revenue:br.revenue-(body.MRP*body.quantity),totalDue:br.totalDue-(body.MRP*body.quantity)});
+       }   
        res.json({status:true,msg:"Updated"}); 
     }catch(err){
        res.status(500).send(err);
