@@ -3,6 +3,8 @@ const router=new express.Router();
 const Order=require("../models/order");
 const Technician=require("../models/technicianStatus");
 const BrandModel=require("../models/brandRegistrationModel");
+const ReturnOrder=require("../models/retuenOrder");
+const { default: axios } = require("axios");
 
 router.post("/createOrder",async(req,res)=>{
     try{
@@ -18,6 +20,37 @@ router.post("/createOrder",async(req,res)=>{
       res.send(order1);
     }catch(err){
         res.status(400).send(err);
+    }
+});
+
+//Return order
+
+router.post("/createReturnOrder",async(req,res)=>{
+       try{
+        let body=req.body;
+        let order=new ReturnOrder(body);
+        let returnOrder=await order.save();
+        res.send(returnOrder);
+       }catch(err){
+        res.status(400).send(err);
+       }
+});
+
+router.get("/getReturnOrder/:id",async(req,res)=>{
+    try{
+     let order=ReturnOrder.findOne({orderId:req.params.id});
+     res.send(order);
+    }catch(err){
+     res.status(400).send(err);
+    }
+});
+
+router.get("/getAllReturnOrder",async(req,res)=>{
+    try{
+     let order= await ReturnOrder.find({});
+     res.send(order);
+    }catch(err){
+     res.status(400).send(err);
     }
 });
 

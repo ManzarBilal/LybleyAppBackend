@@ -15,7 +15,6 @@ const token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjM1OTEyMTcsImlzcyI6Im
 router.post("/createDeliveryOrder",async(req,res)=>{
        try{
           let body=req.body;
-          console.log(body);
           let response=await axios.post("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",body,{headers:{'Authorization':`Bearer ${token}`}});
           let {data}=response;
           await Order.updateOne({_id:body.order_id},{shipOrderId:data?.order_id,shipmentId:data?.shipment_id});
@@ -33,6 +32,15 @@ router.get("/trackOrder/:id",async(req,res)=>{
       res.send(data);
    }catch(err){
       res.status(400).send(err.response.data);
+   }
+});
+
+router.get("/getAllReturns",async(req,res)=>{
+   try{
+    let data=await axios.get("https://apiv2.shiprocket.in/v1/external/orders/processing/return",{headers:{'Authorization':`Bearer ${token}`}});
+    res.send(data);
+   }catch(err){
+      console.log(err);
    }
 });
 
