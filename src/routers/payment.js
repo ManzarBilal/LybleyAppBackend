@@ -34,7 +34,8 @@ router.post("/paymentVerification",async(req,res)=>{
 router.post("/brandDuePayment",async(req,res)=>{
       let body=req.body;
       try{
-      let payResponse = await axios.post(`https://api.razorpay.com/v1/payouts`, body,{headers:{'Authorization':"Basic " + new Buffer(process.env.RAZORPAY_KEY_ID + ":" + process.env.RAZORPAY_KEY_SECRET).toString("base64")}});
+      let payResponse = await axios.post(`https://api.razorpay.com/v1/payouts`, body,{headers:{'Authorization':"Basic " + new Buffer.alloc(process.env.RAZORPAY_KEY_ID + ":" + process.env.RAZORPAY_KEY_SECRET).toString("base64")}});
+      console.log(payResponse);
       res.send(payResponse);
       }catch(err){
           res.status(400).send(err);
