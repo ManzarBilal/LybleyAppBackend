@@ -2,6 +2,7 @@ const express=require("express");
 const router= new express.Router();
 const Razorpay=require("razorpay");
 const crypto=require("crypto");
+const { default: axios } = require("axios");
 require("dotenv");
 
 const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET });
@@ -33,7 +34,7 @@ router.post("/paymentVerification",async(req,res)=>{
 router.post("/brandDuePayment",async(req,res)=>{
       let body=req.body;
       try{
-      let payResponse = await httpCommon.post(`https://api.razorpay.com/v1/payouts`, body,{headers:{'Authorization':"Basic " + new Buffer(process.env.RAZORPAY_KEY_ID + ":" + process.env.RAZORPAY_KEY_SECRET).toString("base64")}});
+      let payResponse = await axios.post(`https://api.razorpay.com/v1/payouts`, body,{headers:{'Authorization':"Basic " + new Buffer(process.env.RAZORPAY_KEY_ID + ":" + process.env.RAZORPAY_KEY_SECRET).toString("base64")}});
       res.send(payResponse);
       }catch(err){
           res.status(400).send(err);
