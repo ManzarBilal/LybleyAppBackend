@@ -30,17 +30,79 @@ router.post("/paymentVerification",async(req,res)=>{
       res.status(400).json({status:false});
      }
 });
-
+//RAZORPAY_KEY_ID="rzp_test_rrscy4JQbxWgbO"
+//RAZORPAY_KEY_SECRET="mv7PsDsYBYg5fpeVlq0YkFVI"
+//{headers:{Authorization:"Basic " + new Buffer.alloc("rzp_test_rrscy4JQbxWgbO" + ":" +"mv7PsDsYBYg5fpeVlq0YkFVI" ).toString("base64")}}
 router.post("/brandDuePayment",async(req,res)=>{
       let body=req.body;
       try{
-          console.log(process.env.RAZORPAY_KEY_ID)
-      let payResponse = await axios.post("https://api.razorpay.com/v1/payouts",body,{headers:{'Authorization':"Basic " + new Buffer.alloc(process.env.RAZORPAY_KEY_ID + ":" + process.env.RAZORPAY_KEY_SECRET).toString("base64")}});
+      let payResponse = await axios.post("https://api.razorpay.com/v1/payouts",body,{headers:{Authorization:"Basic " +new Buffer.alloc("rzp_test_rrscy4JQbxWgbO" + ":" +"mv7PsDsYBYg5fpeVlq0YkFVI" ).toString("base64")}});
       console.log(payResponse);
       res.send(payResponse);
       }catch(err){
        res.status(400).send(err); 
       }
 });
+
+
+router.post("/xpay",async (req,res) => {
+     // try {
+     //   const payoutOptions = {
+     //     account_number: "20462883795",
+     //     bank_code: "SBIN0000650",
+     //     amount: 10000, // Amount in paise (e.g., 1000 paise = Rs. 10.00)
+     //     currency: "INR",
+     //     mode: "NEFT",
+     //     purpose: "payout",
+     //     queue_if_low_balance: 0,
+     //     reference_id: "unique_reference_id",
+     //     narration: "Payout for order #123456",
+     //     notes: {
+     //       note1: "Note 1",
+     //       note2: "Note 2",
+     //     },
+     //   };
+   
+     // const payout = await instance.payouts.create(payoutOptions);
+     //  res.send(payout);
+     // } catch (error) {
+     //   res.status(400).send(error);
+     // }
+
+//    const bk= await instance.payments.create(
+//           {
+//             bank_account: '20462883795',
+//             amount: 10000, // Amount in paise (e.g., 10000 for ₹100)
+//             currency: 'INR',
+//             mode: 'NEFT', // Payment mode (NEFT, IMPS, RTGS, UPI)
+//             purpose: 'vendor_payment',
+//             queue_if_low_balance: 1,
+//           },
+//           (error, payment) => {
+//             if (error) {
+//               console.error(error);
+//             } else {
+//               console.log(payment);
+//             }
+//           }
+//         );
+//         res.send(bk)
+     const options = {
+          account_number: '20462883795',
+          account_type: 'account',
+          amount: 10000, // Amount in paise (e.g., 50000 paise = ₹500.00)
+          currency: 'INR',
+        };
+        
+        await instance.payouts.create(options, function (error, payout) {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log(payout);
+          }
+        });
+   });
+
+//router.get("/xpay",initiatePayout);
 
 module.exports=router;

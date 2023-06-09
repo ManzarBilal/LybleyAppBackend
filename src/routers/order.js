@@ -38,7 +38,16 @@ router.post("/createReturnOrder",async(req,res)=>{
 
 router.get("/getReturnOrder/:id",async(req,res)=>{
     try{
-     let order=ReturnOrder.findOne({orderId:req.params.id});
+     let order= await ReturnOrder.findOne({orderId:req.params.id});
+     res.send(order);
+    }catch(err){
+     res.status(400).send(err);
+    }
+});
+
+router.get("/getReturnOrderByCustomer/:id",async(req,res)=>{
+    try{
+     let order= await ReturnOrder.findOne({customerId:req.params.id});
      res.send(order);
     }catch(err){
      res.status(400).send(err);
