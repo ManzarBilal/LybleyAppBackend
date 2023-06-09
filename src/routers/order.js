@@ -47,7 +47,7 @@ router.get("/getReturnOrder/:id",async(req,res)=>{
 
 router.get("/getReturnOrderByCustomer/:id",async(req,res)=>{
     try{
-     let order= await ReturnOrder.findOne({customerId:req.params.id});
+     let order= await ReturnOrder.find({customerId:req.params.id});
      res.send(order);
     }catch(err){
      res.status(400).send(err);
