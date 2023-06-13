@@ -3,6 +3,11 @@ const moongoose=require("mongoose");
 const sparePartSchema= new moongoose.Schema({
     userId:{type:String,required:true},
     productId:{type:String,required:true},
+    skuNo:{type:String},
+    length:{type:String},
+    breadth:{type:String},
+    height:{type:String},
+    weight:{type:String},
     brandName:{type:String},
     MRP:{type:Number,required:true},
     bestPrice:{type:Number,required:true},
