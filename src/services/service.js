@@ -3,6 +3,7 @@ const nodemailer =  require("nodemailer");
 const multer = require("multer");
 const multers3 = require("multer-s3");
 const aws = require("aws-sdk");
+const qr=require("qrcode");
 require('dotenv').config();
 //const {S3Client,PutObjectCommand,GetObjectCommand } = require("@aws-sdk/client-s3");
 
@@ -90,8 +91,25 @@ const upload=()=>multer({
 // }
 
 
+const QRCode = require('qrcode-generator');
+
+function generateQRCodeFromString(stringData) {
+  try {
+    const qr = QRCode(0, 'L'); // Create a QRCode instance
+    qr.addData(stringData); // Add the string data
+    qr.make();
+
+    const qrCodeData = qr.createDataURL(4); // Generate QR code data URL
+    return qrCodeData;
+  } catch (error) {
+    console.error('Error generating QR code:', error);
+    throw error;
+  }
+}
+
 module.exports={
     smsSend,
     sendMail,
-    upload
+    upload,
+    generateQRCodeFromString,
   }
