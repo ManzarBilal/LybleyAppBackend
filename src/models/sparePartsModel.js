@@ -19,6 +19,7 @@ const sparePartSchema= new moongoose.Schema({
     faultType:{type:Array,required:true},
     technician:{type:Number,required:true},
     images:{type:Array,required:true},
+    qrcode:{type:String}
 },{timestamps:true});
 
 const sparePartModel=new moongoose.model("sparePart",sparePartSchema);
