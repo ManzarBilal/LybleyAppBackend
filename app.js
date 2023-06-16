@@ -2,7 +2,7 @@ const express = require("express");
 require("./src/db/connection");
 const user = require("./src/routers/userRegistration");
 const brand = require("./src/routers/brandRegistration");
-const productCategory=require("./src/routers/brandProductCategories")
+const productCategory=require("./src/routers/brandProductCategories");
 const brandProducts=require("./src/routers/brandProduct");
 const spareParts=require("./src/routers/spareParts");
 const sparePartFault=require("./src/routers/sparePartfaults");
@@ -13,6 +13,7 @@ const dasboard=require("./src/routers/dashboard");
 const payment=require("./src/routers/payment");
 const delivery=require("./src/routers/delivery");
 const bankDetail=require("./src/routers/bankDetail");
+const verifyReturn=require("./src/routers/verifyReturn");
 
 const app=express();
 
@@ -43,6 +44,7 @@ app.use(dasboard);
 app.use(payment);
 app.use(delivery);
 app.use(bankDetail);
+app.use(verifyReturn);
 
 const port = process.env.PORT || 5000;
 app.listen(port,()=>{
