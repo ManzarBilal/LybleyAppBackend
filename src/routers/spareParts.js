@@ -56,6 +56,16 @@ router.get("/allSparePartForAdmin", async (req, res) => {
     }
 });
 
+router.post("/getSparePartByAdminId",async(req,res)=>{
+    try{
+        let body=req.body;
+        let data=await sparePartModel.findOne({userId:body.id,partName:body.partName});
+        res.send(data);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
 router.get("/sparePart/:id", async (req, res) => {
     try {
         let id = req.params.id;
