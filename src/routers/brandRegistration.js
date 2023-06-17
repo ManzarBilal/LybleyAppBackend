@@ -104,6 +104,15 @@ router.get("/getTransactionBy/:id",async(req,res)=>{
     }
 });
 
+router.get("/getAdminDetail",async(req,res)=>{
+    try{
+        let admin=await BrandModel.findOne({role:"ADMIN"}).select("_id");
+        res.send(admin);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
+
 router.patch("/brandOtpVerification", async (req, res) => {
     try {
         let body = req.body;
