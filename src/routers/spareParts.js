@@ -4,7 +4,7 @@ const sparePartModel = require("../models/sparePartsModel");
 const QRCode = require("qrcode");
 const { upload, generateQRCodeFromString } = require("../services/service");
 
-router.post("/addSparePart", async (req, res) => {
+router.post("/addSparePart",upload().array("images"), async (req, res) => {
     try {
         let body = req.body;
         let files = req.files;
