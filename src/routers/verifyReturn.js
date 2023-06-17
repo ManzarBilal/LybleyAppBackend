@@ -1,11 +1,14 @@
 const express=require("express");
 const router=new express.Router();
 const VerifyReturn=require("../models/productReturnVerify");
+const {upload}=require("../services/service")
 
-router.post("/verifyReturnOrder",async(req,res)=>{
+router.post("/verifyReturnOrder",upload().single("video"),async(req,res)=>{
        let body=req.body;
        try{
-        let data=new VerifyReturn(body);
+        let video=req.file.location;
+        let body1={...body,video:video};
+        let data=new VerifyReturn(body1);
         let data1=await data.save();
         res.json({status:true,msg:"Uploaded"});
        }catch(err){
