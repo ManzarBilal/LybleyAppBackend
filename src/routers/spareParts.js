@@ -38,7 +38,7 @@ router.get("/allSparePart", async (req, res) => {
     try {
         let search = req.query.sparePart;
         let data = await sparePartModel.find({});
-        let searchData = data.filter(f1 => f1.partName.toLowerCase().includes(search.toLowerCase()));
+        let searchData = data.filter(f1 => f1.partName.toLowerCase().includes(search.toLowerCase()) || f1.partNo.toLowerCase().includes(search.toLowerCase()));
         let data1 = (search && searchData.length > 0) ? searchData : [];
         res.send(data1);
     } catch (err) {
