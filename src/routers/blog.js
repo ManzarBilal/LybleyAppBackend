@@ -31,7 +31,7 @@ router.delete("/deleteBlog/:id", async (req, res) => {
         res.json({ status: true, msg: "Deleted" });
     } catch (err) {
         res.status(400).send(err);
-    } s
+    }
 });
 
 router.patch("/updateBlog/:id", async (req, res) => {
@@ -39,6 +39,17 @@ router.patch("/updateBlog/:id", async (req, res) => {
         let _id = req.params.id;
         let body = req.body;
         let data = await Blog.findByIdAndUpdate(_id, body);
+        res.json({ status: true, msg: "Updated" });
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+router.patch("/updateImage/:id",upload().single("image"), async (req, res) => {
+    try {
+        let _id = req.params.id;
+        let image = req.file.location;
+        let data = await Blog.findByIdAndUpdate(_id, {image:image});
         res.json({ status: true, msg: "Updated" });
     } catch (err) {
         res.status(400).send(err);
