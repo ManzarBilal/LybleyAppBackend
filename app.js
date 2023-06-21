@@ -14,6 +14,7 @@ const payment=require("./src/routers/payment");
 const delivery=require("./src/routers/delivery");
 const bankDetail=require("./src/routers/bankDetail");
 const verifyReturn=require("./src/routers/verifyReturn");
+const blog=require("./src/routers/blog");
 
 const app=express();
 
@@ -45,6 +46,7 @@ app.use(payment);
 app.use(delivery);
 app.use(bankDetail);
 app.use(verifyReturn);
+app.use(blog);
 
 const port = process.env.PORT || 5000;
 app.listen(port,()=>{
