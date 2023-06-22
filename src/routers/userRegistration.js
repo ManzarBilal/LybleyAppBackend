@@ -6,6 +6,7 @@ const passport = require("passport");
 const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 const UserModel = require("../models/userRegistrationModel");
+const fs = require("fs");
 const app = express();
 const { smsSend, sendMail, upload } = require("../services/service");
 app.use(passport.initialize());
@@ -144,7 +145,7 @@ router.patch("/uploadUserImage/:id", upload().single("image"), async (req, res) 
     try {
         let _id = req.params.id;
         let file = req.file.location;
-        let user = await UserModel.findByIdAndUpdate(_id, {image:file});
+        let user = await UserModel.findByIdAndUpdate(_id, { image: file });
         res.json({ status: true, msg: "Uploaded" });
     } catch (err) {
         res.status(500).send(err);
@@ -243,4 +244,20 @@ router.post("/uploadLogo", upload().single("image"), async (req, res) => {
     let file = req.file.location;
     res.send(file);
 })
+
+router.get("/visitors", function (req, res) {
+    if (req.url === '/favicon.ico') {
+        res.end();
+    }
+    const json = fs.readFileSync('count.json', 'utf-8');
+    const obj = JSON.parse(json);
+    obj.pageviews = obj.pageviews + 1;
+    if (req.query.type === 'visit-pageview') {
+        obj.visits = obj.visits + 1;
+    }
+    const newJSON = JSON.stringify(obj);
+    fs.writeFileSync('count.json', newJSON);
+    res.send(newJSON);
+});
+
 module.exports = router;
