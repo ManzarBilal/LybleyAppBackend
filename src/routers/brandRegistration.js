@@ -76,7 +76,7 @@ router.patch("/updateTotalPay/:id",async(req,res)=>{
       }
       else{
       let brand1=await BrandModel.findByIdAndUpdate(_id,{totalPay:brand.totalPay+body.totalPay,totalDue:brand.totalDue-body.totalPay},{new:true});
-      let trsn=new TransactionModel({brandId:_id,totalPay:body.totalPay,totalDue:brand1.totalDue});
+      let trsn=new TransactionModel({brandId:_id,brandName:brand.brandName,totalPay:body.totalPay,totalDue:brand1.totalDue});
       await trsn.save();
       res.send({status:true,msg:"Updated"});
       }
@@ -88,7 +88,7 @@ router.patch("/updateTotalPay/:id",async(req,res)=>{
 router.get("/getAllTransaction",async(req,res)=>{
     try{
        let transaction=await TransactionModel.find({});
-       res.send(transaction);
+       res.send(transaction.reverse());
     }catch(err){
       res.status(400).send(err);
     }
