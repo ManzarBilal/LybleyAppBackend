@@ -137,7 +137,7 @@ router.get("/getAllTechnicianStatus",async(req,res)=>{
 router.get("/getAllOrder",async(req,res)=>{
     try{
        let orders=await Order.find({});
-       res.send(orders);
+       res.send(orders.reverse());
     }catch(err){
         res.status(400).send(err);
     }
