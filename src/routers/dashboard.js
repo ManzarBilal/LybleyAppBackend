@@ -12,10 +12,8 @@ router.get("/dashboardDetails",async(req,res)=>{
           let sparePart=await SpareParts.find({});
           let brand=await Brand.find({})
           res.json({
-            totalCustomers:customer.length,
-            totalOrders:order.length,
-            sparePart:sparePart.length,
-            totalBrands:brand.length-1,
+            totalCustomers:customer,
+            totalBrands:brand,
             orders:order,
             sparParts:sparePart,
           });
