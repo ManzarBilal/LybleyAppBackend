@@ -5,6 +5,7 @@ const brandTransactionSchema=new mongoose.Schema({
     brandName:{type:String},
     totalPay:{type:Number},
     commission:{type:Number},
+    paidAmount:{type:Number},
     totalDue:{type:Number},
 },{timestamps:true})
 
