@@ -6,6 +6,7 @@ const bankDetailSchema= new mongoose.Schema({
     accountHolderName:{type:String,required:true},
     accountNumber:{type:String,required:true},
     IFSC:{type:String,required:true},
+    commission:{type:Number},
 },{timestamps:true});
 
 const bankDetailModel = new mongoose.model("bankDetail",bankDetailSchema);
