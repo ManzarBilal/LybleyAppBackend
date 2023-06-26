@@ -24,6 +24,16 @@ router.get("/getAllBlogs", async (req, res) => {
     }
 });
 
+router.get("/getBlogById/:id", async (req, res) => {
+    try {
+        let _id=req.params.id;
+        let data = await Blog.findById(_id);
+        res.send(data);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
 router.delete("/deleteBlog/:id", async (req, res) => {
     try {
         let _id = req.params.id;
