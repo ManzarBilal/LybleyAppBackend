@@ -102,7 +102,7 @@ router.patch("/updateShipOrderId/:id",async(req,res)=>{
     try{
        let body=req.body;
        let _id=req.params.id;
-       if(body.status==="DELIVER"){
+      if(body.status==="DELIVER"){
        let order=await Order.findByIdAndUpdate(_id,{status:body.status});
        }else{
         let order=await Order.findByIdAndUpdate(_id,{status:body.status});
@@ -185,3 +185,4 @@ router.get("/getOrderBy/:id",async(req,res)=>{
 });
 
 module.exports=router;
+// a2 d2
