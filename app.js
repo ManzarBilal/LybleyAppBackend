@@ -15,6 +15,7 @@ const delivery=require("./src/routers/delivery");
 const bankDetail=require("./src/routers/bankDetail");
 const verifyReturn=require("./src/routers/verifyReturn");
 const blog=require("./src/routers/blog");
+const blogCategory=require("./src/routers/blogCategory");
 const review=require("./src/routers/review");
 
 const app=express();
@@ -48,6 +49,7 @@ app.use(delivery);
 app.use(bankDetail);
 app.use(verifyReturn);
 app.use(blog);
+app.use(blogCategory);
 app.use(review);
 
 const port = process.env.PORT || 5000;
