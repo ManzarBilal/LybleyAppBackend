@@ -7,8 +7,8 @@ router.post("/createBlog",upload().single("image"), async (req, res) => {
     try {
         let body = req.body;
         let image = req.file.location;
-        let metaImage = req.file.location;
-        let data = new Blog({ ...body, image: image,metaImage:metaImage });
+        // let metaImage = req.file.location;
+        let data = new Blog({ ...body, image: image  });
         let data1 = await data.save();
         res.json({ status: true, msg: "Blog Created" });
     } catch (err) {
@@ -66,7 +66,7 @@ router.patch("/updateImage/:id",upload().single("image"), async (req, res) => {
         res.status(400).send(err);
     }
 });
-router.patch("/updateMetaImage/:id",upload().single("image"), async (req, res) => {
+router.patch("/updateMetaImage/:id",upload().single("metaImage"), async (req, res) => {
     try {
         let _id = req.params.id;
         let metaImage = req.file.location;
