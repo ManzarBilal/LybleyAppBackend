@@ -2,6 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const BrandModel = require("../models/brandRegistrationModel");
 const TransactionModel=require("../models/brandTransaction");
+const Notification=require("../models/notification");
 const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
@@ -29,6 +30,8 @@ router.post("/brandRegistration",upload().single("gstDocument"),async (req, res)
             let brand = new BrandModel(obj);
             let newBrand = await brand.save();
             smsSend(otp, body.contact);
+            let notify=new Notification({name:body.brandName,brandId:newBrand._id,title:"New brand registered"});
+            await notify.save();
           //  sendMail(body.email,body.password,bool);
             res.json({
                 status: true,
@@ -78,6 +81,8 @@ router.patch("/updateTotalPay/:id",async(req,res)=>{
       let brand1=await BrandModel.findByIdAndUpdate(_id,{totalPay:brand.totalPay+body.totalPay,totalDue:brand.totalDue-body.totalPay},{new:true});
       let trsn=new TransactionModel({brandId:_id,brandName:brand.brandName,totalPay:body.totalPay,paidAmount:body.paidAmount,commission:body.commission,totalDue:brand1.totalDue});
       await trsn.save();
+      let notify=new Notification({name:brand.brandName,brandId:_id,title:`Paid ${body.totalPay} INR successfully`});
+      await notify.save();
       res.send({status:true,msg:"Updated"});
       }
     }catch(err){
