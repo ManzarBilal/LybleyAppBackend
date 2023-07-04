@@ -6,6 +6,7 @@ const passport = require("passport");
 const JWTStrategry = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 const UserModel = require("../models/userRegistrationModel");
+const Notification=require("../models/notification");
 const fs = require("fs");
 const app = express();
 const { smsSend, sendMail, upload } = require("../services/service");
@@ -42,6 +43,8 @@ router.post("/userRegistration", async (req, res) => {
             let user1 = await user.save();
             smsSend(otp, body.contact);
             //  sendMail(body.email,body.password,bool);
+            let notify=new Notification({name:body.name,title:"New user registered"});
+            await notify.save();
             res.json({ status: true, msg: "Registration successful" });
         }
     } catch (err) {
@@ -64,6 +67,8 @@ router.post("/serviceCenterRegistration", upload().single("document"), async (re
             let user1 = await user.save();
             smsSend(otp, body.contact);
             //  sendMail(body.email,body.password,bool);
+            let notify=new Notification({name:body.name,title:"New Reseller registered"});
+            await notify.save();
             res.json({ status: true, msg: "Registration successful" });
         }
     } catch (err) {

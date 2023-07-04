@@ -4,6 +4,7 @@ const Order=require("../models/order");
 const Technician=require("../models/technicianStatus");
 const BrandModel=require("../models/brandRegistrationModel");
 const ReturnOrder=require("../models/retuenOrder");
+const Notification=require("../models/notification");
 const { default: axios } = require("axios");
 
 router.post("/createOrder",async(req,res)=>{
@@ -17,6 +18,10 @@ router.post("/createOrder",async(req,res)=>{
 
       let order=new Order(body);
       let order1=await order.save();
+      ids.map(async(id)=>{
+      let notify=new Notification({name:body.name,brandId:id.id,title:"A new order created"});
+      await notify.save();
+    })
       res.send(order1);
     }catch(err){
         res.status(400).send(err);
@@ -30,6 +35,8 @@ router.post("/createReturnOrder",async(req,res)=>{
         let body=req.body;
         let order=new ReturnOrder(body);
         let returnOrder=await order.save();
+        let notify=new Notification({name:body.name,brandId:body.items?.[0].brandId,title:"A new return order created"});
+        await notify.save();
         res.send(returnOrder);
        }catch(err){
         res.status(400).send(err);
