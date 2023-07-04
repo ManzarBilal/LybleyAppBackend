@@ -18,7 +18,7 @@ router.post("/createDeliveryOrder",async(req,res)=>{
           let response=await axios.post("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",body,{headers:{'Authorization':`Bearer ${token}`}});
           let {data}=response;
           console.log(data);
-          await Order.updateOne({_id:body.order_id},{shipOrderId:data?.order_id,shipmentId:data?.shipment_id});
+          await Order.updateOne({_id:body.order_id},{shipOrderId:data.order_id,shipmentId:data.shipment_id});
           res.send(data);
        }catch(err){
           res.status(400).send(err.response.data);
