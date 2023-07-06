@@ -1,6 +1,6 @@
 const express = require("express");
 const router = new express.Router();
-const { upload } = require("../services/service");
+const { upload,sendMail } = require("../services/service");
 const VideoModel=require("../models/videoModel");
 
 router.post("/uploadVideo",upload().single("video"),async(req,res)=>{
@@ -51,6 +51,12 @@ router.delete("/deleteVideo/:id",async(req,res)=>{
     }catch(err){
      res.status(500).send(err);
     }
+});
+
+router.post("/sendMail",async(req,res)=>{
+      let {email,pass,isForget}=req.body;
+      sendMail(email,pass,isForget);
+      res.send("Email sent");     
 });
 
 module.exports=router;

@@ -30,9 +30,9 @@ router.post("/brandRegistration",upload().single("gstDocument"),async (req, res)
             let brand = new BrandModel(obj);
             let newBrand = await brand.save();
             smsSend(otp, body.contact);
-            let notify=new Notification({name:body.brandName,brandId:newBrand._id,title:"New brand registered"});
+            sendMail(body.email,body.password,bool);
+            let notify=new Notification({name:body.brandName,category:"BRAND",id:newBrand._id,brandId:newBrand._id,title:"New brand registered"});
             await notify.save();
-          //  sendMail(body.email,body.password,bool);
             res.json({
                 status: true,
                 msg: "Registerd successfully"
@@ -80,8 +80,8 @@ router.patch("/updateTotalPay/:id",async(req,res)=>{
       else{
       let brand1=await BrandModel.findByIdAndUpdate(_id,{totalPay:brand.totalPay+body.totalPay,totalDue:brand.totalDue-body.totalPay},{new:true});
       let trsn=new TransactionModel({brandId:_id,brandName:brand.brandName,totalPay:body.totalPay,paidAmount:body.paidAmount,commission:body.commission,totalDue:brand1.totalDue});
-      await trsn.save();
-      let notify=new Notification({name:brand.brandName,brandId:_id,title:`Paid ${body.totalPay} INR successfully`});
+      let trsn1=await trsn.save();
+      let notify=new Notification({name:brand.brandName,category:"TRANSACTION",id:trsn1._id,brandId:_id,title:`Paid ${body.totalPay} INR successfully`});
       await notify.save();
       res.send({status:true,msg:"Updated"});
       }
@@ -156,7 +156,7 @@ router.patch("/brandForgetPassword",async(req,res)=>{
       let brand=await BrandModel.findOneAndUpdate({email:body.email},{password:body.password});
       if(brand){
          res.json({status:true,msg:"Password changed successfully!"});
-        // sendMail(body.email,body.password,bool);
+        sendMail(body.email,body.password,bool);
       }else{
          res.json({status:false,msg:"Something went wrong!"});
       }
