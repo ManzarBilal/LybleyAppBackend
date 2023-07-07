@@ -16,6 +16,17 @@ router.post("/uploadVideo",upload().single("video"),async(req,res)=>{
     }
 })
 
+router.post("/videoUrl",async(req,res)=>{
+  try{
+    let body=req.body;
+    let data=new VideoModel(body);
+    let data1=await data.save();
+    res.json({status:true,msg:"Video uploaded successfully"});
+  }catch(err){
+      res.status(400).send(err);
+  }
+})
+
 router.get("/getAllVideos",async(req,res)=>{
       try{
         let data= await VideoModel.find({});

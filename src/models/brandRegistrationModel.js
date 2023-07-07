@@ -17,7 +17,7 @@ const brandSchema= new mongoose.Schema({
     revenue:{type:Number,default:0},
     status:{type:String,default:"INACTIVE"},
     approval:{type:String,default:"DISAPPROVED"},
-    role:{type:String,default:"BRAND"}
+    role:{type:String,required:true}
 },{timestamps:true});
 
 const BrandModel = new mongoose.model("brand",brandSchema);
