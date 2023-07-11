@@ -51,7 +51,6 @@ router.patch("/updateProductCategoryBy/:id",async (req,res)=>{
         let _id=req.params.id;
         let body=req.body;
         let category=await BrandCategoryModel.findByIdAndUpdate(_id,body,{new:true});
-        console.log(category);
         res.json({status:true,msg:"Updated category details"});
     }catch(err){
         res.status(500).send(err);
