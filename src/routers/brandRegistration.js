@@ -43,6 +43,17 @@ router.post("/brandRegistration",upload().single("gstDocument"),async (req, res)
     }
 });
 
+router.post("/adminRegistrationBrand",upload().single("brandLogo"),async(req,res)=>{
+     try{
+        let body=req.body;
+        let brand=new BrandModel({...body,brandLogo:req.file.location,status:"ACTIVE",role:"BRAND"});
+        let brand1=await brand.save();
+        res.json({status:true,msg:"Registerd successfully"});
+     }catch(err){
+        res.status(400).send(err);
+     }
+});
+
 router.post("/brandLogin", async (req, res) => {
     try {
         let body = req.body;
